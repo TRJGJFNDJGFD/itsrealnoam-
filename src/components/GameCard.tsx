@@ -12,8 +12,7 @@ type Props = {
 export default function GameCard({ game, size = "medium" }: Props) {
   const [copied, setCopied] = useState(false);
 
-  async function handlePlay(e: React.MouseEvent) {
-    e.preventDefault();
+  async function handlePlay() {
     try {
       await navigator.clipboard.writeText(SITE_CONFIG.ip);
       setCopied(true);
@@ -24,10 +23,11 @@ export default function GameCard({ game, size = "medium" }: Props) {
   }
 
   return (
-    <a
-      href="#games"
+    <button
+      type="button"
       onClick={handlePlay}
-      className={`focus-ring group relative block overflow-hidden bg-surface transition-all duration-300 ${
+      aria-label={`Copy server IP to play ${game.displayName}`}
+      className={`focus-ring group relative block w-full overflow-hidden bg-surface text-left transition-all duration-300 ${
         size === "large" ? "aspect-[16/9]" : "aspect-[4/5] sm:aspect-[16/11]"
       }`}
     >
@@ -54,7 +54,22 @@ export default function GameCard({ game, size = "medium" }: Props) {
         </h3>
         <p className="mt-3 max-w-sm text-sm text-text-secondary">{game.description}</p>
 
-        <div className="mt-5 flex items-center gap-1.5 text-xs font-semibold tracking-[0.15em] text-text-primary">
+        <div className="mt-4 flex flex-wrap gap-2">
+          {game.tags.map((tag) => (
+            <span
+              key={tag}
+              className="border px-2 py-0.5 text-[10px] font-semibold tracking-[0.15em] text-text-secondary"
+              style={{ borderColor: `${game.accent}40` }}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <div
+          className="mt-5 flex items-center gap-1.5 text-xs font-semibold tracking-[0.15em] text-text-primary"
+          aria-live="polite"
+        >
           {copied ? (
             <>
               <Check size={14} style={{ color: game.accent }} />
@@ -71,6 +86,6 @@ export default function GameCard({ game, size = "medium" }: Props) {
           )}
         </div>
       </div>
-    </a>
+    </button>
   );
 }

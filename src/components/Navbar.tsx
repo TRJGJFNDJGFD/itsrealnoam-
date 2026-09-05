@@ -14,6 +14,7 @@ const LINKS: { label: string; href: string; external?: boolean }[] = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("#home");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -28,6 +29,26 @@ export default function Navbar() {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  useEffect(() => {
+    const sections = LINKS.map((link) => document.querySelector(link.href)).filter(
+      (el): el is Element => el !== null
+    );
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(`#${visible.target.id}`);
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <>
@@ -45,17 +66,23 @@ export default function Navbar() {
           </a>
 
           <nav className="hidden items-center gap-9 md:flex" aria-label="Primary">
-            {LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                target={link.external ? "_blank" : undefined}
-                rel={link.external ? "noopener noreferrer" : undefined}
-                className="focus-ring text-xs font-medium tracking-[0.15em] text-text-secondary transition-colors hover:text-white-pure"
-              >
-                {link.label}
-              </a>
-            ))}
+            {LINKS.map((link) => {
+              const isActive = active === link.href;
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`focus-ring text-xs font-medium tracking-[0.15em] transition-colors hover:text-white-pure ${
+                    isActive ? "text-accent" : "text-text-secondary"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
           </nav>
 
           <a
@@ -70,6 +97,8 @@ export default function Navbar() {
           <button
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
             className="focus-ring text-text-primary md:hidden"
           >
             {open ? <X size={22} /> : <Menu size={22} />}

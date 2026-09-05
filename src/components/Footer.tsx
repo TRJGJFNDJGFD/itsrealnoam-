@@ -42,7 +42,7 @@ export default function Footer() {
         <div className="mt-14 flex flex-col gap-3 border-t border-border pt-8 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <span className="font-mono">{SITE_CONFIG.ip}</span>
-            <span>© 2026 Legend-IL</span>
+            <span>© {new Date().getFullYear()} Legend-IL</span>
           </div>
           <span>Not affiliated with Mojang or Microsoft.</span>
         </div>

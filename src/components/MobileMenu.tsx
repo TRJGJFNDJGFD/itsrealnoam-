@@ -18,6 +18,7 @@ export default function MobileMenu({ open, onClose, links }: Props) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
+          id="mobile-menu"
           className="fixed inset-0 z-50 flex flex-col justify-center bg-bg/98 px-8 md:hidden"
         >
           <nav className="flex flex-col gap-7" aria-label="Mobile">

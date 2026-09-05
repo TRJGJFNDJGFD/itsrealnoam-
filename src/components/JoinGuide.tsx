@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { SITE_CONFIG } from "../config/site";
 import CopyIP from "./CopyIP";
 
 const STEPS = {
@@ -17,7 +18,9 @@ const STEPS = {
 
 export default function JoinGuide() {
   const [tab, setTab] = useState<"java" | "bedrock">("java");
-  const steps = STEPS[tab];
+  // Bedrock steps only render once SITE_CONFIG.bedrockSupported is true —
+  // don't advertise a platform the server hasn't confirmed it supports.
+  const steps = STEPS[SITE_CONFIG.bedrockSupported ? tab : "java"];
 
   return (
     <section className="relative border-t border-border bg-bg-secondary py-20 lg:py-28">
@@ -35,31 +38,38 @@ export default function JoinGuide() {
             </span>
             <h2 className="text-3xl text-white-pure sm:text-4xl">HOW TO JOIN</h2>
             <p className="mt-4 text-text-secondary">
-              Legend-IL supports both Java and Bedrock Edition. Copy the address and connect in
-              under a minute.
+              {SITE_CONFIG.bedrockSupported
+                ? "Legend-IL supports both Java and Bedrock Edition. Copy the address and connect in under a minute."
+                : "Legend-IL runs on Java Edition. Copy the address and connect in under a minute."}
             </p>
             <CopyIP className="mt-6 max-w-xs" />
           </div>
 
           <div className="w-full max-w-md">
-            <div className="mb-6 inline-flex border border-border">
-              <button
-                onClick={() => setTab("java")}
-                className={`focus-ring px-5 py-2 text-xs font-semibold tracking-[0.15em] transition-colors ${
-                  tab === "java" ? "bg-accent text-bg" : "text-text-secondary hover:text-white-pure"
-                }`}
-              >
-                JAVA
-              </button>
-              <button
-                onClick={() => setTab("bedrock")}
-                className={`focus-ring px-5 py-2 text-xs font-semibold tracking-[0.15em] transition-colors ${
-                  tab === "bedrock" ? "bg-accent text-bg" : "text-text-secondary hover:text-white-pure"
-                }`}
-              >
-                BEDROCK
-              </button>
-            </div>
+            {SITE_CONFIG.bedrockSupported && (
+              <div className="mb-6 inline-flex border border-border" role="tablist" aria-label="Edition">
+                <button
+                  role="tab"
+                  aria-selected={tab === "java"}
+                  onClick={() => setTab("java")}
+                  className={`focus-ring px-5 py-2 text-xs font-semibold tracking-[0.15em] transition-colors ${
+                    tab === "java" ? "bg-accent text-bg" : "text-text-secondary hover:text-white-pure"
+                  }`}
+                >
+                  JAVA
+                </button>
+                <button
+                  role="tab"
+                  aria-selected={tab === "bedrock"}
+                  onClick={() => setTab("bedrock")}
+                  className={`focus-ring px-5 py-2 text-xs font-semibold tracking-[0.15em] transition-colors ${
+                    tab === "bedrock" ? "bg-accent text-bg" : "text-text-secondary hover:text-white-pure"
+                  }`}
+                >
+                  BEDROCK
+                </button>
+              </div>
+            )}
 
             <ol className="space-y-5">
               {steps.map((step, i) => (
