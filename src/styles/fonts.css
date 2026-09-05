@@ -1,0 +1,21 @@
+/* Legend-IL font system
+   ---------------------------------------------------------------
+   One font for the entire site, styled to match the real Minecraft
+   typeface used across the network's branding (see reference:
+   Verart's navbar). If you have a licensed MinecraftSeven font file,
+   drop it into /public/fonts/ (any of the formats below — you don't
+   need all three) and it's used automatically. Until then, the site
+   uses Silkscreen — a square pixel-grid Google Font that's the
+   closest freely-licensed match to Minecraft's own typeface — so the
+   blocky pixel look is already correct without any file needed. */
+
+@font-face {
+  font-family: "MinecraftSeven";
+  src:
+    url("/fonts/MinecraftSeven.woff2") format("woff2"),
+    url("/fonts/MinecraftSeven.woff") format("woff"),
+    url("/fonts/MinecraftSeven.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

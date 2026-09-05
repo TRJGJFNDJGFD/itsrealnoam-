@@ -1,0 +1,56 @@
+import { AnimatePresence, motion } from "framer-motion";
+import { SITE_CONFIG } from "../config/site";
+
+type Link = { label: string; href: string; external?: boolean };
+
+type Props = {
+  open: boolean;
+  onClose: () => void;
+  links: Link[];
+};
+
+export default function MobileMenu({ open, onClose, links }: Props) {
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className="fixed inset-0 z-50 flex flex-col justify-center bg-bg/98 px-8 md:hidden"
+        >
+          <nav className="flex flex-col gap-7" aria-label="Mobile">
+            {links.map((link, i) => (
+              <motion.a
+                key={link.href}
+                href={link.href}
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noopener noreferrer" : undefined}
+                onClick={onClose}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 * i, duration: 0.3 }}
+                className="focus-ring text-3xl text-text-primary transition-colors hover:text-accent"
+              >
+                {link.label}
+              </motion.a>
+            ))}
+            <motion.a
+              href={SITE_CONFIG.discord}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onClose}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 * links.length, duration: 0.3 }}
+              className="focus-ring text-3xl text-accent"
+            >
+              DISCORD
+            </motion.a>
+          </nav>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
