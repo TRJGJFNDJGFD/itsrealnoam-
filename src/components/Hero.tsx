@@ -5,11 +5,14 @@ import { SITE_CONFIG } from "../config/site";
 import PixelScene from "./PixelScene";
 import CopyIP from "./CopyIP";
 import ServerStatus from "./ServerStatus";
+import { useCursorParallax } from "../lib/useCursorParallax";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
 export default function Hero() {
   const [copied, setCopied] = useState(false);
+  const sceneRef = useCursorParallax<HTMLDivElement>(10);
+  const gridRef = useCursorParallax<HTMLDivElement>(4);
 
   async function handlePlayNow() {
     try {
@@ -30,8 +33,10 @@ export default function Hero() {
         transition={{ duration: 1.1, ease }}
         className="absolute inset-0"
       >
-        <PixelScene variant="hero" className="absolute inset-0 h-full w-full" />
-        <div className="bg-pixel-grid absolute inset-0 opacity-40" />
+        <div ref={sceneRef} className="absolute -inset-4">
+          <PixelScene variant="hero" className="h-full w-full" />
+        </div>
+        <div ref={gridRef} className="bg-pixel-grid absolute -inset-4 opacity-40" />
         <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/70 to-bg/20" />
         <div className="absolute inset-0 bg-gradient-to-b from-bg via-transparent to-transparent" />
       </motion.div>
@@ -99,7 +104,7 @@ export default function Hero() {
                   className="flex items-center gap-2"
                 >
                   <Check size={16} />
-                  IP COPIED
+                  IP COPIED!
                 </motion.span>
               ) : (
                 <motion.span

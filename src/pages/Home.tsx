@@ -4,6 +4,7 @@ import JoinGuide from "../components/JoinGuide";
 import FeaturesSection from "../components/FeaturesSection";
 import CommunitySection from "../components/CommunitySection";
 import Footer from "../components/Footer";
+import SectionSeam from "../components/SectionSeam";
 
 export default function Home() {
   return (
@@ -11,8 +12,11 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <SectionSeam />
         <JoinGuide />
+        <SectionSeam />
         <FeaturesSection />
+        <SectionSeam />
         <CommunitySection />
       </main>
       <Footer />

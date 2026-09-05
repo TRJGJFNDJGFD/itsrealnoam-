@@ -36,7 +36,7 @@ export default function JoinGuide() {
   return (
     <section
       id="join"
-      className="relative overflow-hidden border-t border-border bg-bg-secondary py-20 lg:py-28"
+      className="relative overflow-hidden bg-bg-secondary py-20 lg:py-28"
     >
       <PixelScene variant="practice" className="absolute inset-0 h-full w-full opacity-[0.12]" />
       <div className="absolute inset-0 bg-gradient-to-b from-bg-secondary via-bg-secondary/95 to-bg-secondary" />

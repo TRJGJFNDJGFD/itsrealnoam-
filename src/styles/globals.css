@@ -87,6 +87,20 @@ body {
   transform-origin: center;
 }
 
+/* Slow shimmer traveling along section-seam dividers. */
+@keyframes seam-shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+.seam-shimmer {
+  animation: seam-shimmer 6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -66,20 +66,36 @@ export default function Navbar() {
       >
         <div className="mx-auto flex max-w-(--container-page) items-center justify-between px-6 py-4 lg:px-10">
           <a href="#home" className="focus-ring flex items-center gap-2.5">
-            <PixelMark size={34} />
-            <span className="text-lg tracking-wide text-white-pure">LEGEND-IL</span>
+            <motion.span
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.05, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <PixelMark size={34} />
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.16, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="text-lg tracking-wide text-white-pure"
+            >
+              LEGEND-IL
+            </motion.span>
           </a>
 
           <nav className="hidden items-center gap-9 md:flex" aria-label="Primary">
-            {LINKS.map((link) => {
+            {LINKS.map((link, i) => {
               const isActive = active === link.href;
               return (
-                <a
+                <motion.a
                   key={link.href}
                   href={link.href}
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
                   aria-current={isActive ? "page" : undefined}
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.26 + i * 0.05, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className={`focus-ring group relative py-1 text-xs font-medium tracking-[0.15em] transition-colors hover:text-white-pure ${
                     isActive ? "text-accent" : "text-text-secondary"
                   }`}
@@ -90,12 +106,17 @@ export default function Navbar() {
                       isActive ? "scale-x-100" : ""
                     }`}
                   />
-                </a>
+                </motion.a>
               );
             })}
           </nav>
 
-          <div className="hidden items-center gap-5 md:flex">
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="hidden items-center gap-5 md:flex"
+          >
             <VoteButton variant="nav" />
             <a
               href={SITE_CONFIG.discord}
@@ -105,7 +126,7 @@ export default function Navbar() {
             >
               DISCORD
             </a>
-          </div>
+          </motion.div>
 
           <button
             onClick={() => setOpen((v) => !v)}

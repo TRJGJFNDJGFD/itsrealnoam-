@@ -86,7 +86,7 @@ export default function CopyIP({ variant = "default", className = "" }: Props) {
               className="flex items-center gap-1.5"
             >
               <Check size={14} className="text-accent" />
-              <span className="text-accent">COPIED</span>
+              <span className="text-accent">COPIED!</span>
             </motion.span>
           ) : (
             <motion.span
