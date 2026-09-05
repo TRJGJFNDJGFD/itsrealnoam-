@@ -3,7 +3,7 @@ import PixelMark from "./PixelMark";
 
 const LINKS = [
   { label: "HOME", href: "#home" },
-  { label: "GAMES", href: "#games" },
+  { label: "JOIN", href: "#join" },
   { label: "FEATURES", href: "#features" },
   { label: "COMMUNITY", href: "#community" },
   { label: "DISCORD", href: SITE_CONFIG.discord },

@@ -66,6 +66,27 @@ body {
   text-wrap: balance;
 }
 
+/* Slow ambient drift for hero background particles — transform + opacity
+   only, so it stays cheap and is fully covered by the reduced-motion
+   override below. */
+@keyframes pixel-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-14px);
+    opacity: 0.75;
+  }
+}
+
+.pixel-particle {
+  animation: pixel-drift 8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

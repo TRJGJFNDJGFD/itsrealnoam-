@@ -2,6 +2,17 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { SITE_CONFIG } from "../config/site";
 import CopyIP from "./CopyIP";
+import PixelScene from "./PixelScene";
+
+const listVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] as const } },
+};
 
 const STEPS = {
   java: [
@@ -23,8 +34,13 @@ export default function JoinGuide() {
   const steps = STEPS[SITE_CONFIG.bedrockSupported ? tab : "java"];
 
   return (
-    <section className="relative border-t border-border bg-bg-secondary py-20 lg:py-28">
-      <div className="mx-auto max-w-(--container-page) px-6 lg:px-10">
+    <section
+      id="join"
+      className="relative overflow-hidden border-t border-border bg-bg-secondary py-20 lg:py-28"
+    >
+      <PixelScene variant="practice" className="absolute inset-0 h-full w-full opacity-[0.12]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-bg-secondary via-bg-secondary/95 to-bg-secondary" />
+      <div className="relative mx-auto max-w-(--container-page) px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -71,9 +87,15 @@ export default function JoinGuide() {
               </div>
             )}
 
-            <ol className="space-y-5">
+            <motion.ol
+              variants={listVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-40px" }}
+              className="space-y-5"
+            >
               {steps.map((step, i) => (
-                <li key={step.title} className="flex gap-4">
+                <motion.li key={step.title} variants={itemVariants} className="flex gap-4">
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center border border-border text-xs text-accent">
                     {i + 1}
                   </span>
@@ -81,9 +103,9 @@ export default function JoinGuide() {
                     <p className="text-sm font-semibold text-white-pure">{step.title}</p>
                     <p className="mt-1 text-sm text-text-secondary">{step.body}</p>
                   </div>
-                </li>
+                </motion.li>
               ))}
-            </ol>
+            </motion.ol>
           </div>
         </motion.div>
       </div>

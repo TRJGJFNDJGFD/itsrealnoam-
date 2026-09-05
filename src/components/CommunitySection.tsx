@@ -55,15 +55,18 @@ export default function CommunitySection() {
           )}
 
           <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
+            <motion.a
               href={SITE_CONFIG.discord}
               target="_blank"
               rel="noopener noreferrer"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.15 }}
               className="focus-ring flex items-center gap-2 bg-accent px-7 py-3.5 text-sm font-semibold tracking-wide text-bg transition-colors hover:bg-accent-soft"
             >
               <DiscordIcon size={16} />
               JOIN DISCORD
-            </a>
+            </motion.a>
             <CopyIP variant="compact" />
           </div>
         </motion.div>

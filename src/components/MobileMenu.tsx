@@ -14,12 +14,12 @@ export default function MobileMenu({ open, onClose, links }: Props) {
     <AnimatePresence>
       {open && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+          animate={{ opacity: 1, backdropFilter: "blur(6px)" }}
+          exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           id="mobile-menu"
-          className="fixed inset-0 z-50 flex flex-col justify-center bg-bg/98 px-8 md:hidden"
+          className="fixed inset-0 z-50 flex flex-col justify-center bg-bg/95 px-8 md:hidden"
         >
           <nav className="flex flex-col gap-7" aria-label="Mobile">
             {links.map((link, i) => (
@@ -31,6 +31,7 @@ export default function MobileMenu({ open, onClose, links }: Props) {
                 onClick={onClose}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
+                whileTap={{ scale: 0.96 }}
                 transition={{ delay: 0.05 * i, duration: 0.3 }}
                 className="focus-ring text-3xl text-text-primary transition-colors hover:text-accent"
               >
@@ -44,6 +45,7 @@ export default function MobileMenu({ open, onClose, links }: Props) {
               onClick={onClose}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
+              whileTap={{ scale: 0.96 }}
               transition={{ delay: 0.05 * links.length, duration: 0.3 }}
               className="focus-ring text-3xl text-accent"
             >

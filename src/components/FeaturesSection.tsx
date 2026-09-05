@@ -15,7 +15,11 @@ const ICONS: Record<
 export default function FeaturesSection() {
   return (
     <section id="features" className="relative bg-bg py-28 lg:py-36">
-      <div className="mx-auto max-w-(--container-page) px-6 lg:px-10">
+      <div
+        className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-bg-secondary to-transparent"
+        aria-hidden="true"
+      />
+      <div className="relative mx-auto max-w-(--container-page) px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -42,9 +46,14 @@ export default function FeaturesSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.5, delay: 0.08 * i }}
-                className="group bg-surface p-7 transition-colors hover:bg-surface-light"
+                whileHover={{ y: -4 }}
+                className="group relative bg-surface p-7 shadow-none transition-[background-color,box-shadow] duration-300 hover:z-10 hover:bg-surface-light hover:shadow-[0_12px_30px_-12px_rgba(0,0,0,0.6)]"
               >
-                <Icon size={22} strokeWidth={1.5} className="text-accent" />
+                <Icon
+                  size={22}
+                  strokeWidth={1.5}
+                  className="text-accent transition-transform duration-300 group-hover:scale-110"
+                />
                 <h3 className="mt-5 text-base font-semibold text-white-pure">{feature.title}</h3>
                 <p className="mt-2 text-sm text-text-secondary">{feature.description}</p>
               </motion.div>

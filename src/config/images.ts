@@ -7,8 +7,6 @@
 // generative scene automatically when a path is left empty.
 export const IMAGES = {
   hero: "",
-  skymines: "",
-  lifesteal: "",
   practice: "",
   community: "",
 };

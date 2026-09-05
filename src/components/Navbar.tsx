@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { SITE_CONFIG } from "../config/site";
 import MobileMenu from "./MobileMenu";
@@ -6,7 +7,7 @@ import PixelMark from "./PixelMark";
 
 const LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: "HOME", href: "#home" },
-  { label: "GAMES", href: "#games" },
+  { label: "JOIN", href: "#join" },
   { label: "FEATURES", href: "#features" },
   { label: "COMMUNITY", href: "#community" },
 ];
@@ -52,7 +53,10 @@ export default function Navbar() {
 
   return (
     <>
-      <header
+      <motion.header
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
           scrolled
             ? "border-b border-border bg-bg/80 backdrop-blur-md"
@@ -75,11 +79,16 @@ export default function Navbar() {
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
                   aria-current={isActive ? "page" : undefined}
-                  className={`focus-ring text-xs font-medium tracking-[0.15em] transition-colors hover:text-white-pure ${
+                  className={`focus-ring group relative py-1 text-xs font-medium tracking-[0.15em] transition-colors hover:text-white-pure ${
                     isActive ? "text-accent" : "text-text-secondary"
                   }`}
                 >
                   {link.label}
+                  <span
+                    className={`absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-accent transition-transform duration-300 group-hover:scale-x-100 ${
+                      isActive ? "scale-x-100" : ""
+                    }`}
+                  />
                 </a>
               );
             })}
@@ -99,12 +108,23 @@ export default function Navbar() {
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            className="focus-ring text-text-primary md:hidden"
+            className="focus-ring relative text-text-primary md:hidden"
           >
-            {open ? <X size={22} /> : <Menu size={22} />}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={open ? "close" : "open"}
+                initial={{ opacity: 0, rotate: -45 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                exit={{ opacity: 0, rotate: 45 }}
+                transition={{ duration: 0.18 }}
+                className="flex"
+              >
+                {open ? <X size={22} /> : <Menu size={22} />}
+              </motion.span>
+            </AnimatePresence>
           </button>
         </div>
-      </header>
+      </motion.header>
 
       <MobileMenu open={open} onClose={() => setOpen(false)} links={LINKS} />
     </>

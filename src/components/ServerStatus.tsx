@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { SITE_CONFIG } from "../config/site";
 import { useServerStatus } from "../lib/useServerStatus";
 
@@ -22,21 +23,46 @@ export default function ServerStatus({ className = "" }: { className?: string })
         {live && online && (
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
         )}
-        <span className={`relative inline-flex h-2 w-2 rounded-full ${dotColor}`} />
+        <motion.span
+          layout
+          animate={{ scale: live ? 1 : 0.85 }}
+          transition={{ duration: 0.3 }}
+          className={`relative inline-flex h-2 w-2 rounded-full transition-colors duration-500 ${dotColor}`}
+        />
       </span>
-      <span className={labelColor}>{statusLabel}</span>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={statusLabel}
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 4 }}
+          transition={{ duration: 0.25 }}
+          className={labelColor}
+        >
+          {statusLabel}
+        </motion.span>
+      </AnimatePresence>
       <span className="text-text-muted">·</span>
       <span className="text-text-muted">{SITE_CONFIG.ip}</span>
       <span className="text-text-muted">·</span>
       <span className="text-text-muted">{version}</span>
-      {live && online && (
-        <>
-          <span className="text-text-muted">·</span>
-          <span className="text-text-muted">
-            {players}/{maxPlayers} PLAYERS
-          </span>
-        </>
-      )}
+      <AnimatePresence initial={false}>
+        {live && online && (
+          <motion.span
+            key="players"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-2"
+          >
+            <span className="text-text-muted">·</span>
+            <span className="text-text-muted">
+              {players}/{maxPlayers} PLAYERS
+            </span>
+          </motion.span>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

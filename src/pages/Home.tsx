@@ -1,8 +1,6 @@
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import JoinGuide from "../components/JoinGuide";
-import GamesSection from "../components/GamesSection";
-import GameSpotlights from "../components/GameSpotlights";
 import FeaturesSection from "../components/FeaturesSection";
 import CommunitySection from "../components/CommunitySection";
 import Footer from "../components/Footer";
@@ -14,8 +12,6 @@ export default function Home() {
       <main>
         <Hero />
         <JoinGuide />
-        <GamesSection />
-        <GameSpotlights />
         <FeaturesSection />
         <CommunitySection />
       </main>

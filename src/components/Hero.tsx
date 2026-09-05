@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Check, Play } from "lucide-react";
 import { SITE_CONFIG } from "../config/site";
 import PixelScene from "./PixelScene";
@@ -80,30 +80,53 @@ export default function Hero() {
           transition={{ delay: 0.76, duration: 0.6, ease }}
           className="mt-9 flex flex-wrap items-center gap-4"
         >
-          <button
+          <motion.button
             onClick={handlePlayNow}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.15 }}
+            aria-live="polite"
             className="focus-ring group flex items-center gap-2 bg-accent px-7 py-3.5 text-sm font-semibold tracking-wide text-bg transition-colors hover:bg-accent-soft"
           >
-            {copied ? (
-              <>
-                <Check size={16} />
-                IP COPIED
-              </>
-            ) : (
-              <>
-                <Play size={16} fill="currentColor" />
-                PLAY NOW
-              </>
-            )}
-          </button>
-          <a
+            <AnimatePresence mode="wait" initial={false}>
+              {copied ? (
+                <motion.span
+                  key="copied"
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ duration: 0.18 }}
+                  className="flex items-center gap-2"
+                >
+                  <Check size={16} />
+                  IP COPIED
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="play"
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ duration: 0.18 }}
+                  className="flex items-center gap-2"
+                >
+                  <Play size={16} fill="currentColor" />
+                  PLAY NOW
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
+          <motion.a
             href={SITE_CONFIG.discord}
             target="_blank"
             rel="noopener noreferrer"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.15 }}
             className="focus-ring border border-border px-7 py-3.5 text-sm font-semibold tracking-wide text-text-primary transition-colors hover:border-accent/50 hover:text-accent"
           >
             JOIN DISCORD
-          </a>
+          </motion.a>
         </motion.div>
 
         <motion.div

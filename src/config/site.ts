@@ -5,24 +5,11 @@ export type ServerStatusData = {
   version: string;
 };
 
-export type GameMode = {
-  id: "skymines" | "lifesteal";
-  name: string;
-  displayName: string;
-  subtitle: string;
-  description: string;
-  tags: string[];
-  /** Short reasons-to-play shown in the game spotlight blocks. */
-  highlights: string[];
-  featured?: boolean;
-  accent: string;
-};
-
 export const SITE_CONFIG = {
   name: "Legend-IL",
   displayName: "LEGEND-IL",
   ip: "legend-il.net",
-  discord: "https://discord.gg/FSttWURnWs",
+  discord: "https://discord.gg/BMQkSdBXHG",
   // TODO: add your minecraft-mp.com (or similar) listing URL, then bring
   // back the VOTE nav item the same way Pixel-IL has it.
   vote: "",
@@ -44,40 +31,11 @@ export const serverStatus: ServerStatusData = {
   version: "1.21+",
 };
 
-// Confirmed modes so far — more are coming, see ComingSoonCard in
-// GamesSection. Add a new entry here (and swap ComingSoonCard for a real
-// GameCard) once the next mode is ready.
-export const GAMES: GameMode[] = [
-  {
-    id: "skymines",
-    name: "SkyMines",
-    displayName: "SKYMINES",
-    subtitle: "MINE • UPGRADE • DOMINATE",
-    description:
-      "Mine your way to the top. Upgrade, progress and become the richest player in the sky.",
-    tags: ["ECONOMY", "PROGRESSION", "COMPETITIVE"],
-    highlights: ["CUSTOM PROGRESSION", "GEAR UPGRADES", "PLAYER ECONOMY"],
-    featured: true,
-    accent: "#E8B84F",
-  },
-  {
-    id: "lifesteal",
-    name: "Lifesteal",
-    displayName: "LIFESTEAL",
-    subtitle: "SURVIVE • FIGHT • STEAL",
-    description:
-      "Fight, survive and steal hearts. Build your power and become the last player standing.",
-    tags: ["PVP", "SURVIVAL", "RISK"],
-    highlights: ["STEAL HEARTS ON KILL", "FULL-LOOT PVP", "HIGH RISK, HIGH REWARD"],
-    accent: "#C3524A",
-  },
-];
-
 export const FEATURES = [
   {
     id: "gameplay",
     title: "Custom Gameplay",
-    description: "SkyMines and Lifesteal aren't vanilla with a coat of paint — each mode has its own economy, progression and rules built around how it's meant to be played.",
+    description: "Not vanilla with a coat of paint — custom systems, economy and rules built around how the server is meant to be played.",
   },
   {
     id: "competitive",
