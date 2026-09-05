@@ -10,9 +10,7 @@ export const SITE_CONFIG = {
   displayName: "LEGEND-IL",
   ip: "legend-il.net",
   discord: "https://discord.gg/BMQkSdBXHG",
-  // TODO: add your minecraft-mp.com (or similar) listing URL, then bring
-  // back the VOTE nav item the same way Pixel-IL has it.
-  vote: "",
+  vote: "https://minecraft-mp.com/server-s359787",
   version: "1.21+",
   description: "A legendary Minecraft experience.",
   accent: "#E8B84F",

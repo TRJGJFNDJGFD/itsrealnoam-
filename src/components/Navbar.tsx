@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { SITE_CONFIG } from "../config/site";
 import MobileMenu from "./MobileMenu";
 import PixelMark from "./PixelMark";
+import VoteButton from "./VoteButton";
 
 const LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: "HOME", href: "#home" },
@@ -94,14 +95,17 @@ export default function Navbar() {
             })}
           </nav>
 
-          <a
-            href={SITE_CONFIG.discord}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="focus-ring hidden rounded-sm border border-border px-5 py-2 text-xs font-semibold tracking-[0.15em] text-text-primary transition-colors hover:border-accent/50 hover:text-accent md:inline-block"
-          >
-            DISCORD
-          </a>
+          <div className="hidden items-center gap-5 md:flex">
+            <VoteButton variant="nav" />
+            <a
+              href={SITE_CONFIG.discord}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="focus-ring rounded-sm border border-border px-5 py-2 text-xs font-semibold tracking-[0.15em] text-text-primary transition-colors hover:border-accent/50 hover:text-accent"
+            >
+              DISCORD
+            </a>
+          </div>
 
           <button
             onClick={() => setOpen((v) => !v)}

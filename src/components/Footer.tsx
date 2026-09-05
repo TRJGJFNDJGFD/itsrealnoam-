@@ -6,6 +6,7 @@ const LINKS = [
   { label: "JOIN", href: "#join" },
   { label: "FEATURES", href: "#features" },
   { label: "COMMUNITY", href: "#community" },
+  ...(SITE_CONFIG.vote ? [{ label: "VOTE", href: SITE_CONFIG.vote }] : []),
   { label: "DISCORD", href: SITE_CONFIG.discord },
 ];
 

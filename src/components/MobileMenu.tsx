@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { ThumbsUp } from "lucide-react";
 import { SITE_CONFIG } from "../config/site";
 
 type Link = { label: string; href: string; external?: boolean };
@@ -38,6 +39,22 @@ export default function MobileMenu({ open, onClose, links }: Props) {
                 {link.label}
               </motion.a>
             ))}
+            {SITE_CONFIG.vote && (
+              <motion.a
+                href={SITE_CONFIG.vote}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={onClose}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ delay: 0.05 * links.length, duration: 0.3 }}
+                className="focus-ring flex items-center gap-2 text-3xl text-text-primary transition-colors hover:text-accent"
+              >
+                <ThumbsUp size={22} />
+                VOTE
+              </motion.a>
+            )}
             <motion.a
               href={SITE_CONFIG.discord}
               target="_blank"
@@ -46,7 +63,7 @@ export default function MobileMenu({ open, onClose, links }: Props) {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               whileTap={{ scale: 0.96 }}
-              transition={{ delay: 0.05 * links.length, duration: 0.3 }}
+              transition={{ delay: 0.05 * (links.length + (SITE_CONFIG.vote ? 1 : 0)), duration: 0.3 }}
               className="focus-ring text-3xl text-accent"
             >
               DISCORD

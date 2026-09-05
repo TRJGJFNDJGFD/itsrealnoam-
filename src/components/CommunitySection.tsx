@@ -3,6 +3,7 @@ import { SITE_CONFIG } from "../config/site";
 import { useDiscordCounts } from "../lib/useDiscordCounts";
 import PixelScene from "./PixelScene";
 import CopyIP from "./CopyIP";
+import VoteButton from "./VoteButton";
 
 // Minimal, deliberate Discord mark — not the brand's purple, tinted to
 // match Legend-IL's neutral palette instead.
@@ -67,6 +68,7 @@ export default function CommunitySection() {
               <DiscordIcon size={16} />
               JOIN DISCORD
             </motion.a>
+            <VoteButton />
             <CopyIP variant="compact" />
           </div>
         </motion.div>
