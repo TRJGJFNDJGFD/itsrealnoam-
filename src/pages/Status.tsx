@@ -8,10 +8,9 @@ import NetworkOverview from "../components/status/NetworkOverview";
 import ServerGrid from "../components/status/ServerGrid";
 import PopularServers from "../components/status/PopularServers";
 import { useNetworkStatus } from "../lib/useNetworkStatus";
-import { isStatusApiConfigured } from "../lib/statusApi";
 
-function resolveVariant(reachable: boolean, apiConfigured: boolean, status: "online" | "offline" | undefined, serversOnline: number | null, serversTotal: number | null): StatusVariant {
-  if (!apiConfigured || !reachable) return "unavailable";
+function resolveVariant(reachable: boolean, status: "online" | "offline" | undefined, serversOnline: number | null, serversTotal: number | null): StatusVariant {
+  if (!reachable) return "unavailable";
   if (status !== "online") return "offline";
   if (serversOnline !== null && serversTotal !== null && serversOnline !== serversTotal) return "partial";
   return "operational";
@@ -19,8 +18,7 @@ function resolveVariant(reachable: boolean, apiConfigured: boolean, status: "onl
 
 function StatusDashboard() {
   const { data, reachable, lastFetchedAt } = useNetworkStatus();
-  const apiConfigured = isStatusApiConfigured();
-  const variant = resolveVariant(reachable, apiConfigured, data?.status, data?.serversOnline ?? null, data?.serversTotal ?? null);
+  const variant = resolveVariant(reachable, data?.status, data?.serversOnline ?? null, data?.serversTotal ?? null);
   const isLive = variant === "operational" || variant === "partial";
 
   return (
@@ -39,15 +37,7 @@ function StatusDashboard() {
         <div className="relative mx-auto flex max-w-(--container-page) flex-col gap-10 px-6 lg:px-10">
           <StatusHeader variant={variant} lastUpdated={data?.lastUpdated ?? null} />
 
-          {!apiConfigured && lastFetchedAt === null && (
-            <p className="border border-border bg-surface p-6 text-sm text-text-secondary">
-              The Status API isn't configured for this build (missing{" "}
-              <code className="font-mono text-text-primary">VITE_STATUS_API_URL</code>). See the
-              project README to connect it.
-            </p>
-          )}
-
-          {apiConfigured && !data && lastFetchedAt === null && (
+          {!data && lastFetchedAt === null && (
             <p className="text-sm text-text-muted">Loading network status…</p>
           )}
 

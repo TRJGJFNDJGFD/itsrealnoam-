@@ -3,16 +3,14 @@ import { ArrowRight, Server, Users } from "lucide-react";
 import RouteLink from "./RouteLink";
 import AnimatedNumber from "./AnimatedNumber";
 import { useNetworkStatus } from "../lib/useNetworkStatus";
-import { isStatusApiConfigured } from "../lib/statusApi";
 
 // Deliberately compact — the full dashboard lives at /status. Both read
 // from the same live Status API (src/lib/networkStatusStore.ts), so the
 // two can never disagree — and neither ever shows stale numbers as current.
 export default function NetworkStatusTeaser() {
   const { data, reachable, lastFetchedAt } = useNetworkStatus();
-  const apiConfigured = isStatusApiConfigured();
 
-  const live = apiConfigured && reachable && lastFetchedAt !== null && data?.status === "online";
+  const live = reachable && lastFetchedAt !== null && data?.status === "online";
   const allOperational = live && data!.serversOnline === data!.serversTotal;
   const dotColor = live ? (allOperational ? "bg-accent" : "bg-[#E0A64C]") : "bg-text-muted";
   const labelColor = live ? (allOperational ? "text-accent" : "text-[#E0A64C]") : "text-text-muted";

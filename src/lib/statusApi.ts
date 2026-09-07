@@ -22,8 +22,8 @@ export type StatusApiResponse = {
 };
 
 // The API always lives at /api/v1/* on this same site, so there's nothing
-// to configure — kept as a function (rather than a plain `true`) so
-// call sites read the same either way if that ever changes.
+// to configure — kept as a function so the poller has a single place to
+// gate on if that ever changes.
 export function isStatusApiConfigured(): boolean {
   return true;
 }

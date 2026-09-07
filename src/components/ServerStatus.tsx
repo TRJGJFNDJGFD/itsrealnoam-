@@ -1,14 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { SITE_CONFIG } from "../config/site";
 import { useNetworkStatus } from "../lib/useNetworkStatus";
-import { isStatusApiConfigured } from "../lib/statusApi";
 import AnimatedNumber from "./AnimatedNumber";
 
 export default function ServerStatus({ className = "" }: { className?: string }) {
   const { data, reachable, lastFetchedAt } = useNetworkStatus();
-  const apiConfigured = isStatusApiConfigured();
 
-  const live = apiConfigured && reachable && lastFetchedAt !== null;
+  const live = reachable && lastFetchedAt !== null;
   const online = live && data?.status === "online";
   const totalPlayers = online ? (data?.totalPlayers ?? 0) : 0;
   const totalMaxPlayers = online ? data!.servers.reduce((sum, s) => sum + s.maxPlayers, 0) : 0;
