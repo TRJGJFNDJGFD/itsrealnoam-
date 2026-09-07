@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ThumbsUp } from "lucide-react";
 import { SITE_CONFIG } from "../config/site";
+import RouteLink from "./RouteLink";
 
 type Link = { label: string; href: string; external?: boolean };
 
@@ -24,20 +25,23 @@ export default function MobileMenu({ open, onClose, links }: Props) {
         >
           <nav className="flex flex-col gap-7" aria-label="Mobile">
             {links.map((link, i) => (
-              <motion.a
+              <motion.span
                 key={link.href}
-                href={link.href}
-                target={link.external ? "_blank" : undefined}
-                rel={link.external ? "noopener noreferrer" : undefined}
-                onClick={onClose}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 whileTap={{ scale: 0.96 }}
                 transition={{ delay: 0.05 * i, duration: 0.3 }}
-                className="focus-ring text-3xl text-text-primary transition-colors hover:text-accent"
               >
-                {link.label}
-              </motion.a>
+                <RouteLink
+                  href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
+                  onClick={onClose}
+                  className="focus-ring text-3xl text-text-primary transition-colors hover:text-accent"
+                >
+                  {link.label}
+                </RouteLink>
+              </motion.span>
             ))}
             {SITE_CONFIG.vote && (
               <motion.a

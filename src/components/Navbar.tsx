@@ -5,15 +5,31 @@ import { SITE_CONFIG } from "../config/site";
 import MobileMenu from "./MobileMenu";
 import PixelMark from "./PixelMark";
 import VoteButton from "./VoteButton";
+import RouteLink from "./RouteLink";
+import { useRoute } from "../lib/router";
 
-const LINKS: { label: string; href: string; external?: boolean }[] = [
+const SECTION_LINKS: { label: string; href: string }[] = [
   { label: "HOME", href: "#home" },
   { label: "JOIN", href: "#join" },
   { label: "FEATURES", href: "#features" },
   { label: "COMMUNITY", href: "#community" },
 ];
 
+const STATUS_LINK = { label: "STATUS", href: "/status" };
+
 export default function Navbar() {
+  const pathname = useRoute();
+  const onHomePage = pathname === "/";
+  // Section anchors only resolve on the homepage — from any other page they
+  // need to point back at "/" first (e.g. "/#join") so they still work.
+  const links = [
+    ...SECTION_LINKS.map((link) => ({
+      ...link,
+      href: onHomePage ? link.href : `/${link.href}`,
+    })),
+    STATUS_LINK,
+  ];
+
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("#home");
@@ -33,7 +49,8 @@ export default function Navbar() {
   }, [open]);
 
   useEffect(() => {
-    const sections = LINKS.map((link) => document.querySelector(link.href)).filter(
+    if (!onHomePage) return;
+    const sections = SECTION_LINKS.map((link) => document.querySelector(link.href)).filter(
       (el): el is Element => el !== null
     );
     if (sections.length === 0) return;
@@ -50,7 +67,7 @@ export default function Navbar() {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [onHomePage]);
 
   return (
     <>
@@ -65,7 +82,7 @@ export default function Navbar() {
         }`}
       >
         <div className="mx-auto flex max-w-(--container-page) items-center justify-between px-6 py-4 lg:px-10">
-          <a href="#home" className="focus-ring flex items-center gap-2.5">
+          <RouteLink href={onHomePage ? "#home" : "/"} className="focus-ring flex items-center gap-2.5">
             <motion.span
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -81,32 +98,34 @@ export default function Navbar() {
             >
               LEGEND-IL
             </motion.span>
-          </a>
+          </RouteLink>
 
           <nav className="hidden items-center gap-9 md:flex" aria-label="Primary">
-            {LINKS.map((link, i) => {
-              const isActive = active === link.href;
+            {links.map((link, i) => {
+              const isStatusLink = link.href === "/status";
+              const isActive = isStatusLink ? !onHomePage : onHomePage && active === link.href;
               return (
-                <motion.a
+                <motion.span
                   key={link.href}
-                  href={link.href}
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noopener noreferrer" : undefined}
-                  aria-current={isActive ? "page" : undefined}
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.26 + i * 0.05, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                  className={`focus-ring group relative py-1 text-xs font-medium tracking-[0.15em] transition-colors hover:text-white-pure ${
-                    isActive ? "text-accent" : "text-text-secondary"
-                  }`}
                 >
-                  {link.label}
-                  <span
-                    className={`absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-accent transition-transform duration-300 group-hover:scale-x-100 ${
-                      isActive ? "scale-x-100" : ""
+                  <RouteLink
+                    href={link.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`focus-ring group relative py-1 text-xs font-medium tracking-[0.15em] transition-colors hover:text-white-pure ${
+                      isActive ? "text-accent" : "text-text-secondary"
                     }`}
-                  />
-                </motion.a>
+                  >
+                    {link.label}
+                    <span
+                      className={`absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-accent transition-transform duration-300 group-hover:scale-x-100 ${
+                        isActive ? "scale-x-100" : ""
+                      }`}
+                    />
+                  </RouteLink>
+                </motion.span>
               );
             })}
           </nav>
@@ -151,7 +170,7 @@ export default function Navbar() {
         </div>
       </motion.header>
 
-      <MobileMenu open={open} onClose={() => setOpen(false)} links={LINKS} />
+      <MobileMenu open={open} onClose={() => setOpen(false)} links={links} />
     </>
   );
 }

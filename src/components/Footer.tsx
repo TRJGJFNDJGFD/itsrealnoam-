@@ -1,16 +1,24 @@
 import { SITE_CONFIG } from "../config/site";
 import PixelMark from "./PixelMark";
+import RouteLink from "./RouteLink";
+import { useRoute } from "../lib/router";
 
-const LINKS = [
+const SECTION_LINKS = [
   { label: "HOME", href: "#home" },
   { label: "JOIN", href: "#join" },
   { label: "FEATURES", href: "#features" },
   { label: "COMMUNITY", href: "#community" },
-  ...(SITE_CONFIG.vote ? [{ label: "VOTE", href: SITE_CONFIG.vote }] : []),
-  { label: "DISCORD", href: SITE_CONFIG.discord },
 ];
 
 export default function Footer() {
+  const onHomePage = useRoute() === "/";
+  const links = [
+    ...SECTION_LINKS.map((link) => ({ ...link, href: onHomePage ? link.href : `/${link.href}` })),
+    { label: "STATUS", href: "/status" },
+    ...(SITE_CONFIG.vote ? [{ label: "VOTE", href: SITE_CONFIG.vote }] : []),
+    { label: "DISCORD", href: SITE_CONFIG.discord },
+  ];
+
   return (
     <footer className="border-t border-border bg-bg-secondary">
       <div className="mx-auto max-w-(--container-page) px-6 py-16 lg:px-10">
@@ -26,8 +34,8 @@ export default function Footer() {
           </div>
 
           <nav className="flex flex-wrap gap-x-8 gap-y-3 sm:justify-end" aria-label="Footer">
-            {LINKS.map((link) => (
-              <a
+            {links.map((link) => (
+              <RouteLink
                 key={link.label}
                 href={link.href}
                 target={link.href.startsWith("http") ? "_blank" : undefined}
@@ -35,7 +43,7 @@ export default function Footer() {
                 className="focus-ring text-xs font-medium tracking-[0.15em] text-text-secondary transition-colors hover:text-white-pure"
               >
                 {link.label}
-              </a>
+              </RouteLink>
             ))}
           </nav>
         </div>
