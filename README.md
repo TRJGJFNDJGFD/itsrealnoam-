@@ -158,9 +158,18 @@ is hardcoded or invented.
 
 ### Build it
 
+The `velocity-api` version pinned in `pom.xml` may drift out of date (Velocity mostly
+ships `-SNAPSHOT` versions, which get superseded). If `mvn package` fails with
+"was not found" for `velocity-api`, check the actual available versions at
+https://repo.papermc.io/service/rest/repository/browse/maven-public/com/velocitypowered/velocity-api/
+and update the `<version>` in `pom.xml` to match the latest one listed (it will look
+like `3.3.0-SNAPSHOT` or similar) before rebuilding.
+
 ```bash
 cd legendil-status-velocity
-mvn package
+mvn package -U
+# -U forces Maven to re-check for the dependency instead of reusing a cached
+# "not found" result from an earlier attempt with a different version.
 # -> target/legendil-status-1.0.0.jar
 ```
 
