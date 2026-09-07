@@ -1,4 +1,4 @@
-import type { HeartbeatPayload, ServerStatusEntry } from "./state.js";
+import type { HeartbeatPayload, ServerStatusEntry } from "./types.ts";
 
 type ValidationResult =
   | { ok: true; payload: HeartbeatPayload }

@@ -1,6 +1,8 @@
-// Thin client for the Legend-IL Status API (see /legendil-status-api).
-// VITE_STATUS_API_URL is a public base URL, not a secret — the API token
-// lives only on the Velocity plugin and is never present in this bundle.
+// Thin client for the status API, which is just Netlify Functions deployed
+// as part of this same site (see /netlify/functions) — no separate host,
+// no API URL to configure. The functions read/write a Netlify Blobs store
+// instead of in-memory state, and are only ever reached over HTTPS by this
+// same-origin fetch; the Velocity plugin's API token is never present here.
 
 export type StatusApiServer = {
   name: string;
@@ -19,17 +21,15 @@ export type StatusApiResponse = {
   servers: StatusApiServer[];
 };
 
+// The API always lives at /api/v1/* on this same site, so there's nothing
+// to configure — kept as a function (rather than a plain `true`) so
+// call sites read the same either way if that ever changes.
 export function isStatusApiConfigured(): boolean {
-  return Boolean(import.meta.env.VITE_STATUS_API_URL);
+  return true;
 }
 
 export async function fetchNetworkStatus(): Promise<StatusApiResponse> {
-  const baseUrl = import.meta.env.VITE_STATUS_API_URL as string | undefined;
-  if (!baseUrl) {
-    throw new Error("VITE_STATUS_API_URL is not configured — see .env.example");
-  }
-
-  const res = await fetch(`${baseUrl.replace(/\/$/, "")}/api/v1/status`);
+  const res = await fetch("/api/v1/status");
   if (!res.ok) {
     throw new Error(`Status API responded with ${res.status}`);
   }

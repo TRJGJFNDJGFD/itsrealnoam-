@@ -1,67 +1,74 @@
 # Legend-IL — Website + Live Network Status
 
-This repository contains three separate projects:
-
 ```text
-itsrealnoam- /                    (this repo root — the website)
-├── src/                          React + TypeScript + Vite + Tailwind + Framer Motion
-├── legendil-status-api/          Node.js + TypeScript + Fastify — the Status API
-└── legendil-status-velocity/     Java Maven plugin for Velocity 3.x
+itsrealnoam- /
+├── src/                          React + TypeScript + Vite + Tailwind + Framer Motion (the website)
+├── netlify/functions/            The status API — Netlify Functions, deployed as part of THIS SAME site
+└── legendil-status-velocity/     Java Maven plugin for Velocity, reports live status
 ```
 
-They're independently deployable. The data only ever flows one way:
+There is **one deployment**: this repo, pushed to Netlify. The website and the status API
+ship together, on the same domain, from the same `netlify.toml`. There's no separate
+server, no separate hosting account, and no second URL to configure. Data flows one way:
 
 ```text
 Minecraft servers
       ↓
    Velocity  (legendil-status-velocity plugin)
       ↓ HTTPS POST every 5s, Bearer-token authenticated
-   Status API  (legendil-status-api)
-      ↓ HTTPS GET, public, read-only
+   Status API  (netlify/functions/heartbeat.ts, on this site)
+      ↓ stored in Netlify Blobs
+   Status API  (netlify/functions/status.ts, on this site)
+      ↓ same-origin HTTPS GET, public, read-only
    Website  (/status page + homepage teaser card)
 ```
 
-The browser never talks to Velocity directly. The Velocity API token lives only on the
-plugin side and is never present in the website's bundle.
+The browser never talks to Velocity directly. The Velocity API token lives only in
+Netlify's environment variables (read by the `heartbeat` function) and is never present
+in the website's bundle or in any GET response.
 
 ---
 
-## 1. The website (this directory)
+## 1. The website + status API (this repo)
 
 ```bash
 npm install
-npm run dev       # local dev server
+npm run dev       # Vite dev server — the UI only; /api/v1/* won't exist here
 npm run build     # production build -> dist/
 npm run preview   # preview the production build
 ```
 
-### Connecting it to the Status API
+### Running the whole thing locally (website + functions together)
 
-Copy `.env.example` to `.env` and set:
+Plain `npm run dev` only starts Vite, so `/status` will show "Status Unavailable" — there's
+no function server behind it. To run both together like Netlify does in production, use the
+[Netlify CLI](https://docs.netlify.com/cli/get-started/):
 
-```env
-VITE_STATUS_API_URL=http://localhost:3001
+```bash
+npm install -g netlify-cli   # one-time
+cp .env.example .env          # then fill in STATUS_API_TOKEN
+netlify dev
 ```
 
-This is a **public** URL, not a secret — it's baked into the client bundle so the browser
-knows where to `fetch()` from. Point it at your deployed API's origin in production
-(e.g. `https://status-api.legend-il.net`).
-
-If this variable isn't set, the site still builds and runs fine — `/status` and the
-homepage card just show "Status Unavailable" instead of throwing.
+This serves the Vite app **and** `netlify/functions/*` on one local URL, with `/api/v1/*`
+routed to the functions exactly like production. `netlify dev` reads `.env` at the repo
+root automatically.
 
 ### Where the live data is used
 
-- `src/lib/statusApi.ts` — the only place that calls `fetch()` against the Status API.
+- `netlify/functions/heartbeat.ts` — Velocity posts here; validates and stores the
+  payload in a Netlify Blobs store (`getStore("status")`).
+- `netlify/functions/status.ts` — the website reads from here; applies the
+  staleness check (see below) before ever calling the network "online".
+- `src/lib/statusApi.ts` — the only place the frontend calls `fetch()`; always hits
+  `/api/v1/status` on the same origin, no URL to configure.
 - `src/lib/networkStatusStore.ts` — a small shared poller (5s interval) so every
   consumer (Hero's status widget, the homepage teaser card, and `/status`) reads from
   one in-flight request cycle instead of each running its own interval.
-- `src/lib/useNetworkStatus.ts` — the hook every component actually uses
+- `src/lib/useNetworkStatus.ts` — the hook every component uses
   (`useSyncExternalStore` under the hood).
-- `src/components/ServerStatus.tsx` — the small status line in the Hero section.
-- `src/components/NetworkStatusTeaser.tsx` — the compact "Legend-IL Network" card on
-  the homepage, linking to `/status`.
-- `src/pages/Status.tsx` and `src/components/status/*` — the full dashboard.
+- `src/components/ServerStatus.tsx`, `src/components/NetworkStatusTeaser.tsx`,
+  `src/pages/Status.tsx` and `src/components/status/*` — the consuming UI.
 
 **No mock data remains anywhere in this project.** Every number shown is either live
 from the API or the UI explicitly says it doesn't have data ("Network Offline" /
@@ -70,42 +77,21 @@ from the API or the UI explicitly says it doesn't have data ("Network Offline" /
 ### What's not shown (yet)
 
 TPS, ping, CPU, RAM, uptime history, and a real player list all got removed from the
-dashboard because Velocity can't currently supply them reliably (see the "Future work"
-section below) — the UI simply doesn't claim to have data it doesn't have.
+dashboard because Velocity can't currently supply them reliably (see "Future work" below)
+— the UI simply doesn't claim to have data it doesn't have.
 
 ---
 
-## 2. The Status API (`legendil-status-api/`)
+## 2. The status API (`netlify/functions/`)
 
-Fastify + TypeScript. Holds the latest heartbeat in memory and serves it back out.
-
-### Run it
-
-```bash
-cd legendil-status-api
-npm install
-cp .env.example .env    # then edit STATUS_API_TOKEN and WEBSITE_ORIGIN
-npm run dev              # tsx watch, for local development
-# or:
-npm run build && npm run start   # production
-```
-
-### Environment variables
-
-| Variable            | Meaning                                                                 |
-|----------------------|--------------------------------------------------------------------------|
-| `PORT`               | Port to listen on (default `3001`).                                     |
-| `STATUS_API_TOKEN`   | Shared secret the Velocity plugin authenticates with. **Generate a real one**: `openssl rand -hex 32`. |
-| `WEBSITE_ORIGIN`     | Comma-separated list of origins allowed to call `GET /api/v1/status` from a browser. Never `*` in production. |
-| `STALE_AFTER_MS`     | If no heartbeat arrives within this window, the network is reported offline instead of serving old numbers as live. Default `15000`. |
-
-### Endpoints
+Three Netlify Functions, deployed automatically whenever this repo deploys to Netlify —
+no separate build, no separate host, no separate account:
 
 - `GET /api/v1/health` → `{ "status": "ok" }`
-- `POST /api/v1/heartbeat` — Velocity-only. Requires `Authorization: Bearer <STATUS_API_TOKEN>`.
-  Wrong or missing token → `401 Unauthorized`. Invalid payload shape → `400`. Rate-limited
-  to 20 requests/minute (heartbeats are expected every 5s).
-- `GET /api/v1/status` — public, read-only, CORS-restricted to `WEBSITE_ORIGIN`. Returns:
+- `POST /api/v1/heartbeat` — Velocity-only. Requires
+  `Authorization: Bearer <STATUS_API_TOKEN>`. Wrong/missing token → `401`. Invalid
+  payload shape → `400`.
+- `GET /api/v1/status` — public, read-only. Returns:
 
   ```json
   {
@@ -125,36 +111,49 @@ npm run build && npm run start   # production
   `totalPlayers` / `serversOnline` / `serversTotal` / `servers` are nulled out rather
   than serving the last known numbers as if they were current.
 
+### Why this works without a server to manage
+
+Functions are stateless — a fresh invocation doesn't remember the previous one — so the
+latest heartbeat is stored in **Netlify Blobs**, a small key-value store attached to your
+Netlify site. No database to provision, no separate service, no extra credentials: it's
+configured automatically for functions running on Netlify (and in `netlify dev` locally).
+
+### Environment variables (set these in Netlify's dashboard)
+
+Go to **Site configuration → Environment variables** on your Netlify site:
+
+| Variable            | Meaning                                                                 |
+|----------------------|--------------------------------------------------------------------------|
+| `STATUS_API_TOKEN`   | Shared secret the Velocity plugin authenticates with. **Generate a real one**: `openssl rand -hex 32`. |
+| `WEBSITE_ORIGIN`     | Optional. Only needed if some *other* site should also be allowed to read `GET /api/v1/status` from a browser — this site's own frontend is same-origin and doesn't need it. |
+| `STALE_AFTER_MS`     | If no heartbeat arrives within this window, the network is reported offline instead of serving old numbers as live. Default `15000`. |
+
+After adding/changing these, trigger a redeploy (Netlify's UI has a "Trigger deploy"
+button, or just push a commit) so the functions pick them up.
+
 ### Testing it end-to-end
 
+Against your deployed site (replace with your real Netlify URL):
+
 ```bash
-curl http://localhost:3001/api/v1/health
+curl https://YOUR-SITE.netlify.app/api/v1/health
 # {"status":"ok"}
 
-curl -X POST http://localhost:3001/api/v1/heartbeat \
+curl -X POST https://YOUR-SITE.netlify.app/api/v1/heartbeat \
   -H "Authorization: Bearer YOUR_TOKEN" -H "Content-Type: application/json" \
   -d '{"network":"legend-il","timestamp":"2026-09-07T12:00:00Z","servers":[{"name":"lobby","status":"online","players":24,"maxPlayers":100}],"totalPlayers":24}'
 # {"success":true}   (wrong token -> 401 Unauthorized)
 
-curl http://localhost:3001/api/v1/status
-# the JSON shape above
+curl https://YOUR-SITE.netlify.app/api/v1/status
+# the JSON shape above, populated within a few seconds of the heartbeat
 ```
-
-### Deployment note
-
-This process holds state in memory, so it needs a **persistent runtime** — a small VPS,
-Railway, Render, Fly.io, etc. — not a stateless serverless function platform (a fresh
-serverless invocation wouldn't remember the last heartbeat). Put it behind HTTPS
-(a reverse proxy like Caddy/Nginx with a Let's Encrypt cert, or your host's built-in TLS)
-before pointing Velocity at it — the plugin's `api-url` should be an `https://` address in
-production.
 
 ---
 
 ## 3. The Velocity plugin (`legendil-status-velocity/`)
 
-Java, Maven, targets Velocity 3.x (Java 17+). Reads Velocity's own live state — nothing
-is hardcoded or invented.
+Java, Maven, targets current Velocity (Java 21+). Reads Velocity's own live state —
+nothing is hardcoded or invented.
 
 ### Build it
 
@@ -162,8 +161,8 @@ The `velocity-api` version pinned in `pom.xml` may drift out of date (Velocity m
 ships `-SNAPSHOT` versions, which get superseded). If `mvn package` fails with
 "was not found" for `velocity-api`, check the actual available versions at
 https://repo.papermc.io/service/rest/repository/browse/maven-public/com/velocitypowered/velocity-api/
-and update the `<version>` in `pom.xml` to match the latest one listed (it will look
-like `3.3.0-SNAPSHOT` or similar) before rebuilding.
+and update `<velocity.api.version>` in `pom.xml` to match the latest one listed before
+rebuilding.
 
 ```bash
 cd legendil-status-velocity
@@ -185,10 +184,13 @@ you fill it in:
 # The network name reported in every heartbeat payload.
 network=legend-il
 
-# Full URL of your Status API's heartbeat endpoint.
-api-url=https://YOUR-API-DOMAIN/api/v1/heartbeat
+# Your Netlify site's heartbeat endpoint. Use the real https:// URL Netlify
+# gives your site (or your custom domain, once you have one) — never a bare
+# IP or http://, since this must be a valid HTTPS endpoint.
+api-url=https://YOUR-SITE.netlify.app/api/v1/heartbeat
 
-# Shared secret configured on the Status API side (STATUS_API_TOKEN). Never commit this.
+# Must match the STATUS_API_TOKEN set in Netlify's environment variables.
+# Never commit this.
 api-token=change-me
 
 # How often (in seconds) to send a heartbeat.
@@ -198,8 +200,12 @@ heartbeat-interval=5
 Restart the proxy after editing it. You should see a log line like:
 
 ```text
-[legendil-status] Sending heartbeats for network 'legend-il' every 5s to https://YOUR-API-DOMAIN/api/v1/heartbeat
+[legendil-status] Sending heartbeats for network 'legend-il' every 5s to https://YOUR-SITE.netlify.app/api/v1/heartbeat
 ```
+
+Because the target is your Netlify site over HTTPS, this works with a managed game-panel
+Minecraft host too — there's nothing to run alongside Velocity, no VPS, no tunnel. The
+plugin just needs outbound HTTPS access, which a Minecraft host always allows.
 
 ### What it actually sends
 
@@ -223,15 +229,16 @@ breaking the API contract.
 
 ## Verifying the whole pipeline works
 
-1. Start the Status API (`npm run dev` in `legendil-status-api/`).
-2. `curl http://localhost:3001/api/v1/health` → `{"status":"ok"}`.
+1. Deploy this repo to Netlify (push to the branch Netlify builds from) and set
+   `STATUS_API_TOKEN` in its environment variables.
+2. `curl https://YOUR-SITE.netlify.app/api/v1/health` → `{"status":"ok"}`.
 3. Build and install the Velocity plugin, point its `api-url` at
-   `http://YOUR-VELOCITY-HOST:3001/api/v1/heartbeat` (use your real API token), restart
-   the proxy, and watch its console for the "Sending heartbeats..." log line.
-4. `curl http://localhost:3001/api/v1/status` — within 5 seconds you should see real
-   player/server counts appear.
-5. Set `VITE_STATUS_API_URL` in the website's `.env` to the API's URL, run `npm run dev`,
-   and open `/status` — the dashboard should match what curl showed you.
+   `https://YOUR-SITE.netlify.app/api/v1/heartbeat` with your real token, restart the
+   proxy, and watch its console for the "Sending heartbeats..." log line.
+4. `curl https://YOUR-SITE.netlify.app/api/v1/status` — within 5 seconds you should see
+   real player/server counts appear.
+5. Open `https://YOUR-SITE.netlify.app/status` — the dashboard should match what curl
+   showed you. No env var or redeploy needed on the website side — it's the same site.
 6. Stop the proxy (or just wait): after 15 seconds with no heartbeat, both the API and
    the website should report the network offline rather than showing stale numbers.
 
@@ -247,8 +254,8 @@ show them:
 - Real per-server ping
 - A real online-player list (with usernames only — still no IPs/UUIDs)
 - Player join/leave/session history
-- A 24h/7d/30d players-online graph (needs the API to persist history somewhere instead
-  of holding only the latest heartbeat)
+- A 24h/7d/30d players-online graph (needs history stored across multiple Blobs keys,
+  not just the latest heartbeat)
 - Maintenance mode / incident banners
 - Multiple Velocity proxies reporting into the same API
 
