@@ -1,10 +1,3 @@
-export type ServerStatusData = {
-  online: boolean;
-  players: number;
-  maxPlayers: number;
-  version: string;
-};
-
 export const SITE_CONFIG = {
   name: "Legend-IL",
   displayName: "LEGEND-IL",
@@ -18,15 +11,6 @@ export const SITE_CONFIG = {
   // Join Guide only shows Bedrock steps when this is true, so we never
   // advertise platform support the server doesn't have yet.
   bedrockSupported: false,
-};
-
-// Replace with a live call to your /players API on Velocity if you'd
-// rather not depend on mcsrvstat.us — see src/lib/useServerStatus.ts.
-export const serverStatus: ServerStatusData = {
-  online: true,
-  players: 0,
-  maxPlayers: 100,
-  version: "1.21+",
 };
 
 export const FEATURES = [

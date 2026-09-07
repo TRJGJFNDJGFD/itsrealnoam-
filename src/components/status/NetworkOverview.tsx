@@ -1,51 +1,47 @@
-import { Users, Server, Gauge, Wifi } from "lucide-react";
-import type { NetworkStats } from "../../data/types";
-import OverviewCard from "./OverviewCard";
+import { Users, Server } from "lucide-react";
+import { motion } from "framer-motion";
+import AnimatedNumber from "../AnimatedNumber";
 
-function tpsSubtitle(tps: number) {
-  if (tps >= 19.5) return "Excellent performance";
-  if (tps >= 18) return "Good performance";
-  return "Degraded performance";
-}
+type Props = {
+  totalPlayers: number;
+  serversOnline: number;
+  serversTotal: number;
+};
 
-function pingSubtitle(ping: number) {
-  if (ping <= 60) return "Excellent connection";
-  if (ping <= 120) return "Good connection";
-  return "High latency";
-}
-
-export default function NetworkOverview({ stats }: { stats: NetworkStats }) {
+export default function NetworkOverview({ totalPlayers, serversOnline, serversTotal }: Props) {
   const cards = [
     {
       icon: Users,
       label: "Players Online",
-      value: String(stats.playersOnline),
+      value: <AnimatedNumber value={totalPlayers} />,
       subtitle: "Across the network",
     },
     {
       icon: Server,
       label: "Servers Online",
-      value: `${stats.serversOnline} / ${stats.serversTotal}`,
-      subtitle: stats.serversOnline === stats.serversTotal ? "All systems operational" : "Some servers unavailable",
-    },
-    {
-      icon: Gauge,
-      label: "Average TPS",
-      value: stats.averageTps.toFixed(2),
-      subtitle: tpsSubtitle(stats.averageTps),
-    },
-    {
-      icon: Wifi,
-      label: "Average Ping",
-      value: `${stats.averagePing}ms`,
-      subtitle: pingSubtitle(stats.averagePing),
+      value: `${serversOnline} / ${serversTotal}`,
+      subtitle: serversOnline === serversTotal ? "All systems operational" : "Some servers unavailable",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {cards.map((card, i) => (
-        <OverviewCard key={card.label} {...card} index={i} />
+        <motion.div
+          key={card.label}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+          whileHover={{ y: -3 }}
+          className="border border-border bg-surface p-6 transition-colors duration-300 hover:border-accent/30 hover:bg-surface-light"
+        >
+          <div className="flex items-center gap-2 text-xs font-semibold tracking-[0.15em] text-text-secondary">
+            <card.icon size={15} className="text-accent" />
+            {card.label.toUpperCase()}
+          </div>
+          <div className="mt-3 text-4xl font-semibold text-white-pure">{card.value}</div>
+          <p className="mt-1.5 text-sm text-text-muted">{card.subtitle}</p>
+        </motion.div>
       ))}
     </div>
   );

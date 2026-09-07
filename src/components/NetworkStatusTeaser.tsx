@@ -1,14 +1,22 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Server, Users } from "lucide-react";
 import RouteLink from "./RouteLink";
-import { useNetworkOverview } from "../lib/useNetworkOverview";
+import AnimatedNumber from "./AnimatedNumber";
+import { useNetworkStatus } from "../lib/useNetworkStatus";
+import { isStatusApiConfigured } from "../lib/statusApi";
 
-// Deliberately compact — the full dashboard lives at /status. Numbers come
-// from the same data layer (src/data/api.ts) that page uses, so the two
-// never disagree.
+// Deliberately compact — the full dashboard lives at /status. Both read
+// from the same live Status API (src/lib/networkStatusStore.ts), so the
+// two can never disagree — and neither ever shows stale numbers as current.
 export default function NetworkStatusTeaser() {
-  const { stats } = useNetworkOverview();
-  const allOperational = stats ? stats.serversOnline === stats.serversTotal : true;
+  const { data, reachable, lastFetchedAt } = useNetworkStatus();
+  const apiConfigured = isStatusApiConfigured();
+
+  const live = apiConfigured && reachable && lastFetchedAt !== null && data?.status === "online";
+  const allOperational = live && data!.serversOnline === data!.serversTotal;
+  const dotColor = live ? (allOperational ? "bg-accent" : "bg-[#E0A64C]") : "bg-text-muted";
+  const labelColor = live ? (allOperational ? "text-accent" : "text-[#E0A64C]") : "text-text-muted";
+  const label = !live ? "STATUS UNAVAILABLE" : allOperational ? "ALL SYSTEMS OPERATIONAL" : "PARTIAL OUTAGE";
 
   return (
     <section className="relative bg-bg py-16 lg:py-20">
@@ -26,26 +34,31 @@ export default function NetworkStatusTeaser() {
             <div>
               <div className="flex items-center gap-2.5">
                 <span className="relative flex h-2 w-2">
-                  {allOperational && (
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+                  {live && (
+                    <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dotColor}`} />
                   )}
-                  <span className={`relative inline-flex h-2 w-2 rounded-full ${allOperational ? "bg-accent" : "bg-[#C3524A]"}`} />
+                  <span className={`relative inline-flex h-2 w-2 rounded-full ${dotColor}`} />
                 </span>
                 <h3 className="text-lg text-white-pure">Legend-IL Network</h3>
               </div>
-              <p className={`mt-1 text-sm font-semibold ${allOperational ? "text-accent" : "text-[#C3524A]"}`}>
-                {allOperational ? "All Systems Operational" : "Partial Outage"}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm text-text-secondary">
-                <span className="flex items-center gap-1.5">
-                  <Users size={14} className="text-text-muted" />
-                  {stats ? stats.playersOnline : "—"} Players Online
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Server size={14} className="text-text-muted" />
-                  {stats ? `${stats.serversOnline} / ${stats.serversTotal}` : "—"} Servers Online
-                </span>
-              </div>
+              <p className={`mt-1 text-sm font-semibold ${labelColor}`}>{label}</p>
+
+              {live ? (
+                <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm text-text-secondary">
+                  <span className="flex items-center gap-1.5">
+                    <Users size={14} className="text-text-muted" />
+                    <AnimatedNumber value={data!.totalPlayers ?? 0} /> Players Online
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Server size={14} className="text-text-muted" />
+                    {data!.serversOnline} / {data!.serversTotal} Servers Online
+                  </span>
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-text-secondary">
+                  Network status is currently unavailable.
+                </p>
+              )}
             </div>
 
             <span className="flex shrink-0 items-center gap-1.5 text-sm font-semibold tracking-wide text-accent">

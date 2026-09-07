@@ -1,22 +1,13 @@
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import type { MinecraftServer } from "../../data/types";
+import type { StatusApiServer } from "../../lib/statusApi";
 import { getStatusVisual } from "./statusVisuals";
 import QuickJoinButton from "./QuickJoinButton";
 
 type Props = {
-  server: MinecraftServer;
+  server: StatusApiServer;
   onClose: () => void;
 };
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between border-b border-border py-2.5 last:border-b-0">
-      <span className="text-xs font-semibold tracking-[0.1em] text-text-muted">{label}</span>
-      <span className="font-mono text-sm text-white-pure">{value}</span>
-    </div>
-  );
-}
 
 export default function ServerDetailsPanel({ server, onClose }: Props) {
   const visual = getStatusVisual(server.status);
@@ -54,23 +45,10 @@ export default function ServerDetailsPanel({ server, onClose }: Props) {
         {isOnline ? (
           <>
             <p className="mt-4 text-2xl font-semibold text-white-pure">
-              {server.players} / {server.maxPlayers} <span className="text-base font-normal text-text-secondary">Players</span>
+              {server.players} / {server.maxPlayers}{" "}
+              <span className="text-base font-normal text-text-secondary">Players</span>
             </p>
-
-            <div className="mt-6 grid gap-x-10 gap-y-1 sm:grid-cols-2">
-              <Stat label="TPS" value={server.tps.toFixed(2)} />
-              <Stat label="MSPT" value={`${server.mspt.toFixed(1)}ms`} />
-              <Stat label="PING" value={`${server.ping}ms`} />
-              <Stat label="CPU" value={`${server.cpuPercent}%`} />
-              <Stat label="RAM" value={`${server.ramUsedGb.toFixed(1)} / ${server.ramTotalGb} GB`} />
-              <Stat label="VERSION" value={server.version} />
-            </div>
-
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
-              <div>
-                <span className="block text-xs font-semibold tracking-[0.1em] text-text-muted">UPTIME</span>
-                <span className="text-lg font-semibold text-white-pure">{server.uptime}</span>
-              </div>
+            <div className="mt-6">
               <QuickJoinButton />
             </div>
           </>

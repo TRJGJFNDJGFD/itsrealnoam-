@@ -3,26 +3,25 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PixelScene from "../components/PixelScene";
 import { ToastProvider } from "../components/status/ToastProvider";
-import StatusHeader from "../components/status/StatusHeader";
+import StatusHeader, { type StatusVariant } from "../components/status/StatusHeader";
 import NetworkOverview from "../components/status/NetworkOverview";
 import ServerGrid from "../components/status/ServerGrid";
-import PlayerList from "../components/status/PlayerList";
-import NetworkActivityChart from "../components/status/NetworkActivityChart";
-import LiveActivityFeed from "../components/status/LiveActivityFeed";
 import PopularServers from "../components/status/PopularServers";
-import UptimeTimeline from "../components/status/UptimeTimeline";
-import { useNetworkOverview } from "../lib/useNetworkOverview";
-import { useServers } from "../lib/useServers";
-import { usePlayers } from "../lib/usePlayers";
-import { useLiveActivity } from "../lib/useLiveActivity";
-import { useUptime } from "../lib/useUptime";
+import { useNetworkStatus } from "../lib/useNetworkStatus";
+import { isStatusApiConfigured } from "../lib/statusApi";
+
+function resolveVariant(reachable: boolean, apiConfigured: boolean, status: "online" | "offline" | undefined, serversOnline: number | null, serversTotal: number | null): StatusVariant {
+  if (!apiConfigured || !reachable) return "unavailable";
+  if (status !== "online") return "offline";
+  if (serversOnline !== null && serversTotal !== null && serversOnline !== serversTotal) return "partial";
+  return "operational";
+}
 
 function StatusDashboard() {
-  const { stats, lastUpdated } = useNetworkOverview();
-  const { servers } = useServers();
-  const { players } = usePlayers();
-  const { events } = useLiveActivity();
-  const uptime = useUptime();
+  const { data, reachable, lastFetchedAt } = useNetworkStatus();
+  const apiConfigured = isStatusApiConfigured();
+  const variant = resolveVariant(reachable, apiConfigured, data?.status, data?.serversOnline ?? null, data?.serversTotal ?? null);
+  const isLive = variant === "operational" || variant === "partial";
 
   return (
     <div className="relative min-h-screen bg-bg">
@@ -38,22 +37,39 @@ function StatusDashboard() {
         <div className="absolute inset-0 bg-gradient-to-b from-bg via-bg to-bg" />
 
         <div className="relative mx-auto flex max-w-(--container-page) flex-col gap-10 px-6 lg:px-10">
-          <StatusHeader allOperational={stats ? stats.serversOnline === stats.serversTotal : true} lastUpdated={lastUpdated} />
+          <StatusHeader variant={variant} lastUpdated={data?.lastUpdated ?? null} />
 
-          {stats && <NetworkOverview stats={stats} />}
+          {!apiConfigured && lastFetchedAt === null && (
+            <p className="border border-border bg-surface p-6 text-sm text-text-secondary">
+              The Status API isn't configured for this build (missing{" "}
+              <code className="font-mono text-text-primary">VITE_STATUS_API_URL</code>). See the
+              project README to connect it.
+            </p>
+          )}
 
-          <ServerGrid servers={servers} />
+          {apiConfigured && !data && lastFetchedAt === null && (
+            <p className="text-sm text-text-muted">Loading network status…</p>
+          )}
 
-          <PlayerList players={players} servers={servers} />
+          {isLive && data && (
+            <>
+              <NetworkOverview
+                totalPlayers={data.totalPlayers ?? 0}
+                serversOnline={data.serversOnline ?? 0}
+                serversTotal={data.serversTotal ?? 0}
+              />
+              <ServerGrid servers={data.servers} />
+              <PopularServers servers={data.servers} />
+            </>
+          )}
 
-          <NetworkActivityChart />
-
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <LiveActivityFeed events={events} />
-            <PopularServers servers={servers} />
-          </div>
-
-          <UptimeTimeline percent={uptime.percent} timeline={uptime.timeline} />
+          {!isLive && data && lastFetchedAt !== null && (
+            <p className="border border-border bg-surface p-6 text-sm text-text-secondary">
+              {variant === "unavailable"
+                ? "Couldn't reach the Status API. Live player and server counts will appear once it's back."
+                : "The network hasn't sent a status update recently, so live numbers are hidden until it reconnects."}
+            </p>
+          )}
         </div>
       </motion.main>
 

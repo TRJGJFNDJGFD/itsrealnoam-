@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { MinecraftServer } from "../../data/types";
+import type { StatusApiServer } from "../../lib/statusApi";
 import ServerCard from "./ServerCard";
 import ServerDetailsPanel from "./ServerDetailsPanel";
 
-export default function ServerGrid({ servers }: { servers: MinecraftServer[] }) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const selected = servers.find((s) => s.id === selectedId) ?? null;
+export default function ServerGrid({ servers }: { servers: StatusApiServer[] }) {
+  const [selectedName, setSelectedName] = useState<string | null>(null);
+  const selected = servers.find((s) => s.name === selectedName) ?? null;
 
   return (
     <div>
@@ -22,17 +22,17 @@ export default function ServerGrid({ servers }: { servers: MinecraftServer[] }) 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {servers.map((server, i) => (
           <ServerCard
-            key={server.id}
+            key={server.name}
             server={server}
-            selected={selectedId === server.id}
-            onSelect={() => setSelectedId((current) => (current === server.id ? null : server.id))}
+            selected={selectedName === server.name}
+            onSelect={() => setSelectedName((current) => (current === server.name ? null : server.name))}
             index={i}
           />
         ))}
       </div>
 
       <AnimatePresence>
-        {selected && <ServerDetailsPanel server={selected} onClose={() => setSelectedId(null)} />}
+        {selected && <ServerDetailsPanel server={selected} onClose={() => setSelectedName(null)} />}
       </AnimatePresence>
     </div>
   );

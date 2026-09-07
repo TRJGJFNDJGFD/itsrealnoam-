@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import type { MinecraftServer } from "../../data/types";
+import type { StatusApiServer } from "../../lib/statusApi";
 import { getStatusVisual } from "./statusVisuals";
 import QuickJoinButton from "./QuickJoinButton";
 
 type Props = {
-  server: MinecraftServer;
+  server: StatusApiServer;
   selected: boolean;
   onSelect: () => void;
   index: number;
@@ -36,8 +36,14 @@ export default function ServerCard({ server, selected, onSelect, index }: Props)
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-lg font-semibold text-white-pure">{server.name}</h3>
-          <div className={`mt-1 flex items-center gap-1.5 text-xs font-semibold tracking-[0.1em] ${visual.text}`}>
+          <h3 className="text-lg font-semibold text-white-pure">{server.name.toUpperCase()}</h3>
+          <motion.div
+            key={server.status}
+            initial={{ scale: 1 }}
+            animate={{ scale: [1, 1.35, 1] }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className={`mt-1 flex items-center gap-1.5 text-xs font-semibold tracking-[0.1em] ${visual.text}`}
+          >
             <span className="relative flex h-1.5 w-1.5">
               {isOnline && (
                 <span
@@ -51,7 +57,7 @@ export default function ServerCard({ server, selected, onSelect, index }: Props)
               />
             </span>
             {visual.label}
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -60,11 +66,6 @@ export default function ServerCard({ server, selected, onSelect, index }: Props)
           <p className="mt-4 text-sm text-text-secondary">
             {server.players} / {server.maxPlayers} Players
           </p>
-          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-text-muted">
-            <span>TPS {server.tps.toFixed(2)}</span>
-            <span>Ping {server.ping}ms</span>
-            <span>Uptime {server.uptime}</span>
-          </div>
           <div className="mt-5" onClick={(e) => e.stopPropagation()}>
             <QuickJoinButton />
           </div>
