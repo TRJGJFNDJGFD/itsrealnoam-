@@ -13,8 +13,9 @@
   <description>Reports live Velocity network status (players, servers) to the Legend-IL Status API via HTTPS heartbeats.</description>
 
   <properties>
-    <maven.compiler.release>17</maven.compiler.release>
+    <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <velocity.api.version>4.1.1-SNAPSHOT</velocity.api.version>
   </properties>
 
   <repositories>
@@ -30,7 +31,7 @@
     <dependency>
       <groupId>com.velocitypowered</groupId>
       <artifactId>velocity-api</artifactId>
-      <version>3.3.0-SNAPSHOT</version>
+      <version>${velocity.api.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -42,6 +43,19 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.13.0</version>
+        <configuration>
+          <!-- Required on JDK 23+: the @Plugin annotation processor that
+               generates Velocity's plugin metadata must be listed here
+               explicitly, since newer javac no longer auto-discovers
+               processors from the compile classpath. -->
+          <annotationProcessorPaths>
+            <path>
+              <groupId>com.velocitypowered</groupId>
+              <artifactId>velocity-api</artifactId>
+              <version>${velocity.api.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
       </plugin>
     </plugins>
   </build>
