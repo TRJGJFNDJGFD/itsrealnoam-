@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NOVA BARBER | מספרת גברים פרימיום</title>
+<meta name="description" content="NOVA BARBER — מספרת גברים פרימיום. תספורות, עיצוב זקן וטיפוח גברי ברמה הגבוהה ביותר. קבעו תור עוד היום בטלפון או בוואטסאפ." />
+<meta name="keywords" content="מספרה, מספרת גברים, תספורת גברים, עיצוב זקן, ברבר, barber, נובה בארבר" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://novabarber.co.il/" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="NOVA BARBER" />
+<meta property="og:title" content="NOVA BARBER | מספרת גברים פרימיום" />
+<meta property="og:description" content="הסטייל שלך מתחיל כאן. תספורות, עיצוב זקן וטיפוח גברי ברמה הגבוהה ביותר." />
+<meta property="og:locale" content="he_IL" />
+<meta name="theme-color" content="#0a0a0b" />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0b'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23cba35c' font-family='Georgia,serif'%3EN%3C/text%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --bg:#0a0a0b;
+    --bg-soft:#141416;
+    --bg-card:#18181b;
+    --line:rgba(255,255,255,.08);
+    --line-strong:rgba(255,255,255,.14);
+    --text:#f3f1ec;
+    --text-dim:#a8a6a1;
+    --text-faint:#77746e;
+    --gold:#cba35c;
+    --gold-light:#e6c98a;
+    --gold-dim:rgba(203,163,92,.14);
+    --shadow:0 20px 50px rgba(0,0,0,.45);
+    --radius:20px;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme]){ }
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Heebo',system-ui,-apple-system,sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{ font-family:'Frank Ruhl Libre',Georgia,serif; }
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  ul{list-style:none;margin:0;padding:0;}
+  .container{max-width:1180px;margin:0 auto;padding:0 24px;}
+  section{position:relative;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    color:var(--gold-light); font-size:13px; letter-spacing:3px; font-weight:600;
+    text-transform:uppercase; margin-bottom:16px;
+  }
+  .eyebrow::before{content:'';width:28px;height:1px;background:var(--gold);}
+  h2.section-title{
+    font-size:clamp(30px,4.2vw,48px);
+    font-weight:700;
+    margin:0 0 18px;
+    color:#fff;
+  }
+  .section-lead{ color:var(--text-dim); font-size:17px; max-width:640px; margin:0 0 48px; }
+  .gold{ color:var(--gold-light); }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    padding:16px 30px; border-radius:100px; font-weight:700; font-size:15px;
+    cursor:pointer; border:1px solid transparent; transition:transform .25s ease, box-shadow .25s ease, background .25s ease, border-color .25s ease;
+    white-space:nowrap;
+  }
+  .btn:active{ transform:scale(.97); }
+  .btn-gold{ background:linear-gradient(135deg,var(--gold-light),var(--gold)); color:#141210; box-shadow:0 10px 30px rgba(203,163,92,.25); }
+  .btn-gold:hover{ transform:translateY(-2px); box-shadow:0 14px 36px rgba(203,163,92,.38); }
+  .btn-outline{ background:transparent; border-color:var(--line-strong); color:#fff; }
+  .btn-outline:hover{ border-color:var(--gold); background:var(--gold-dim); transform:translateY(-2px); }
+  .btn-wa{ background:#1c2a22; color:#7fe3a3; border:1px solid rgba(127,227,163,.25); }
+  .btn-wa:hover{ background:#20362a; transform:translateY(-2px); }
+  .btn-block{ width:100%; }
+
+  /* reveal-on-scroll */
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .8s ease, transform .8s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed; inset-inline:0; top:0; z-index:100;
+    background:rgba(10,10,11,.55); backdrop-filter:blur(14px);
+    border-bottom:1px solid transparent;
+    transition:background .3s ease, border-color .3s ease, padding .3s ease;
+    padding:18px 0;
+  }
+  header.scrolled{ background:rgba(10,10,11,.88); border-color:var(--line); padding:12px 0; }
+  nav{ display:flex; align-items:center; justify-content:space-between; }
+  .logo{ display:flex; align-items:center; gap:10px; font-family:'Frank Ruhl Libre',serif; font-size:22px; font-weight:700; letter-spacing:.5px; }
+  .logo .mark{
+    width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--gold-light),#8f6f34); color:#12100c; font-weight:900; font-size:19px;
+  }
+  .logo b{ color:var(--gold-light); }
+  .nav-links{ display:flex; align-items:center; gap:34px; }
+  .nav-links a{ font-size:15px; color:var(--text-dim); font-weight:500; transition:color .2s ease; position:relative; }
+  .nav-links a:hover{ color:#fff; }
+  .nav-cta{ display:flex; align-items:center; gap:12px; }
+  .burger{ display:none; width:42px;height:42px;border-radius:10px;border:1px solid var(--line-strong); background:transparent; color:#fff; align-items:center;justify-content:center;cursor:pointer; }
+  .mobile-panel{
+    display:none; position:fixed; inset:0; z-index:99; background:rgba(8,8,9,.98);
+    padding:110px 28px 40px; flex-direction:column; gap:6px;
+  }
+  .mobile-panel.open{ display:flex; }
+  .mobile-panel a{ padding:16px 4px; font-size:20px; border-bottom:1px solid var(--line); color:#fff; font-family:'Frank Ruhl Libre',serif; }
+  .mobile-panel .btn{ margin-top:22px; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100svh; display:flex; align-items:center; padding:150px 0 90px;
+    position:relative; overflow:hidden;
+    background:
+      radial-gradient(ellipse 900px 500px at 85% -10%, rgba(203,163,92,.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 0% 100%, rgba(203,163,92,.08), transparent 60%),
+      linear-gradient(180deg,#0a0a0b 0%, #0d0d0f 100%);
+  }
+  .hero::before{
+    content:''; position:absolute; inset:0; opacity:.5; pointer-events:none;
+    background-image:
+      repeating-linear-gradient(115deg, rgba(255,255,255,.025) 0 2px, transparent 2px 90px);
+  }
+  .hero-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:60px; align-items:center; position:relative; z-index:2; }
+  .hero h1{
+    font-size:clamp(40px,6vw,72px); line-height:1.08; font-weight:900; margin:0 0 24px; color:#fff;
+    letter-spacing:-.5px;
+  }
+  .hero h1 span{ color:var(--gold-light); }
+  .hero p.lead{ font-size:18px; color:var(--text-dim); max-width:520px; margin:0 0 38px; }
+  .hero-ctas{ display:flex; flex-wrap:wrap; gap:16px; margin-bottom:44px; }
+  .hero-stats{ display:flex; gap:36px; flex-wrap:wrap; }
+  .hero-stats div{ display:flex; flex-direction:column; }
+  .hero-stats b{ font-size:28px; font-family:'Frank Ruhl Libre',serif; color:var(--gold-light); }
+  .hero-stats span{ font-size:13px; color:var(--text-faint); margin-top:4px; }
+
+  .hero-visual{ position:relative; }
+  .hero-card{
+    position:relative; border-radius:28px; aspect-ratio:4/5; overflow:hidden;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(203,163,92,.35), transparent 55%),
+      linear-gradient(150deg,#1c1c1f 0%, #0c0c0d 70%);
+    border:1px solid var(--line-strong); box-shadow:var(--shadow);
+    display:flex; align-items:flex-end; padding:26px;
+  }
+  .hero-card svg{ position:absolute; inset:0; width:100%; height:100%; opacity:.9; }
+  .hero-badge{
+    position:relative; z-index:2; background:rgba(10,10,11,.75); backdrop-filter:blur(6px);
+    border:1px solid var(--line-strong); border-radius:16px; padding:16px 18px; width:100%;
+    display:flex; align-items:center; gap:12px;
+  }
+  .hero-badge .dot{ width:10px;height:10px;border-radius:50%; background:#5fe08a; box-shadow:0 0 0 4px rgba(95,224,138,.15); flex:none; }
+  .hero-badge b{ display:block; font-size:14px; }
+  .hero-badge span{ display:block; font-size:12px; color:var(--text-faint); margin-top:2px; }
+  .float-chip{
+    position:absolute; background:var(--bg-card); border:1px solid var(--line-strong); border-radius:14px;
+    padding:12px 16px; box-shadow:var(--shadow); display:flex; align-items:center; gap:10px; z-index:3;
+    animation:float 5s ease-in-out infinite;
+  }
+  .float-chip.c1{ top:8%; inset-inline-start:-8%; animation-delay:0s; }
+  .float-chip.c2{ bottom:14%; inset-inline-end:-6%; animation-delay:1.2s; }
+  .float-chip b{ font-size:13px; }
+  .float-chip span{ font-size:11px; color:var(--text-faint); }
+  @keyframes float{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-12px);} }
+
+  /* ---------- INTRO ---------- */
+  .intro{ padding:90px 0 30px; }
+  .intro-grid{ display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+  .intro-copy p{ color:var(--text-dim); font-size:16.5px; margin-bottom:16px; }
+  .intro-points{ display:grid; gap:16px; margin-top:24px; }
+  .intro-points li{ display:flex; align-items:center; gap:12px; font-size:15px; color:#f0eee8; }
+  .intro-points svg{ flex:none; color:var(--gold-light); }
+  .intro-visual{
+    border-radius:24px; aspect-ratio:1/1; border:1px solid var(--line-strong);
+    background:linear-gradient(145deg,#17171a,#0b0b0c);
+    display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+  }
+
+  /* ---------- SERVICES ---------- */
+  .services{ padding:110px 0; background:linear-gradient(180deg,#0a0a0b,#0d0d0f); }
+  .services-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .svc-card{
+    background:var(--bg-card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:32px 28px; transition:transform .3s ease, border-color .3s ease, background .3s ease;
+    display:flex; flex-direction:column; gap:16px;
+  }
+  .svc-card:hover{ transform:translateY(-6px); border-color:var(--gold); background:#1c1c1f; }
+  .svc-card.vip{ border-color:rgba(203,163,92,.45); background:linear-gradient(160deg,#1c1a13,#151412); }
+  .svc-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+  .svc-icon{
+    width:52px;height:52px;border-radius:14px; background:var(--gold-dim); color:var(--gold-light);
+    display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  .svc-price{ font-family:'Frank Ruhl Libre',serif; font-size:26px; color:var(--gold-light); font-weight:700; white-space:nowrap; }
+  .svc-price small{ font-size:13px; color:var(--text-faint); font-weight:400; margin-inline-end:2px;}
+  .svc-card h3{ font-size:20px; margin:0; color:#fff; }
+  .svc-card p{ color:var(--text-dim); font-size:14.5px; margin:0; flex:1; }
+  .svc-card .btn{ font-size:14px; padding:12px 20px; margin-top:6px; }
+  .svc-tag{ position:absolute; top:-12px; inset-inline-start:24px; background:var(--gold); color:#141210; font-size:11px; font-weight:800; padding:5px 14px; border-radius:100px; letter-spacing:.5px; }
+  .svc-card{ position:relative; }
+
+  /* ---------- WHY ---------- */
+  .why{ padding:110px 0; }
+  .why-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:22px; }
+  .why-card{ text-align:center; padding:34px 20px; border-radius:18px; border:1px solid var(--line); background:var(--bg-soft); transition:transform .3s ease, border-color .3s; }
+  .why-card:hover{ transform:translateY(-4px); border-color:var(--line-strong); }
+  .why-icon{ width:56px;height:56px;border-radius:16px;margin:0 auto 18px; background:var(--gold-dim); color:var(--gold-light); display:flex;align-items:center;justify-content:center; }
+  .why-card h3{ font-size:17px; margin:0 0 8px; color:#fff; font-family:'Heebo'; font-weight:700; }
+  .why-card p{ font-size:14px; color:var(--text-dim); margin:0; }
+
+  /* ---------- GALLERY ---------- */
+  .gallery{ padding:110px 0; background:linear-gradient(180deg,#0d0d0f,#0a0a0b); }
+  .gal-grid{ display:grid; grid-template-columns:repeat(4,1fr); grid-auto-rows:150px; gap:16px; }
+  .gal-item{
+    border-radius:18px; position:relative; overflow:hidden; border:1px solid var(--line);
+    display:flex; align-items:flex-end; padding:16px; cursor:pointer;
+  }
+  .gal-item::after{ content:''; position:absolute; inset:0; background:linear-gradient(0deg,rgba(0,0,0,.75),rgba(0,0,0,.05) 60%); }
+  .gal-item svg{ position:absolute; inset:0; width:100%; height:100%; transition:transform .5s ease; }
+  .gal-item:hover svg{ transform:scale(1.08); }
+  .gal-label{ position:relative; z-index:2; color:#fff; font-size:14px; font-weight:700; }
+  .gal-item.big{ grid-column:span 2; grid-row:span 2; }
+
+  /* ---------- REVIEWS ---------- */
+  .reviews{ padding:110px 0; }
+  .rev-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .rev-card{ background:var(--bg-card); border:1px solid var(--line); border-radius:var(--radius); padding:28px; display:flex; flex-direction:column; gap:16px; }
+  .stars{ color:var(--gold-light); font-size:15px; letter-spacing:2px; }
+  .rev-card p{ color:#e9e7e1; font-size:15px; margin:0; line-height:1.7; }
+  .rev-who{ display:flex; align-items:center; gap:12px; margin-top:auto; }
+  .rev-avatar{ width:42px;height:42px;border-radius:50%; background:linear-gradient(135deg,var(--gold-light),#8f6f34); display:flex;align-items:center;justify-content:center; color:#141210; font-weight:800; }
+  .rev-who b{ display:block; font-size:14px; }
+  .rev-who span{ display:block; font-size:12px; color:var(--text-faint); }
+
+  /* ---------- ABOUT ---------- */
+  .about{ padding:110px 0; background:linear-gradient(180deg,#0a0a0b,#0d0d0f); }
+  .about-grid{ display:grid; grid-template-columns:.9fr 1.1fr; gap:60px; align-items:center; }
+  .about-visual{ aspect-ratio:3/4; border-radius:24px; border:1px solid var(--line-strong); position:relative; overflow:hidden; background:linear-gradient(160deg,#18171a,#0a0a0b); }
+  .about-copy p{ color:var(--text-dim); font-size:16.5px; margin-bottom:18px; }
+  .about-quote{ border-inline-start:3px solid var(--gold); padding-inline-start:20px; margin:28px 0; font-family:'Frank Ruhl Libre',serif; font-size:19px; color:#fff; }
+  .about-numbers{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:30px; }
+  .about-numbers div{ text-align:center; padding:18px 8px; border-radius:14px; background:var(--bg-card); border:1px solid var(--line); }
+  .about-numbers b{ display:block; font-size:26px; font-family:'Frank Ruhl Libre',serif; color:var(--gold-light); }
+  .about-numbers span{ font-size:12px; color:var(--text-faint); }
+
+  /* ---------- CTA BANNER ---------- */
+  .cta-banner{
+    margin:0 24px; border-radius:28px; padding:70px 40px; text-align:center; position:relative; overflow:hidden;
+    background:linear-gradient(135deg,#171512,#0d0c0a); border:1px solid rgba(203,163,92,.3);
+  }
+  .cta-banner::before{ content:''; position:absolute; inset:-40% -10% auto; height:300px; background:radial-gradient(circle,rgba(203,163,92,.25),transparent 65%); }
+  .cta-banner h2{ position:relative; font-size:clamp(26px,4vw,40px); margin:0 0 14px; color:#fff; }
+  .cta-banner p{ position:relative; color:var(--text-dim); margin:0 0 32px; font-size:16px; }
+  .cta-banner .row{ position:relative; display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
+
+  /* ---------- CONTACT ---------- */
+  .contact{ padding:110px 0; }
+  .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:start; }
+  .form-card{ background:var(--bg-card); border:1px solid var(--line); border-radius:var(--radius); padding:34px; }
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:13px; color:var(--text-dim); margin-bottom:8px; font-weight:600; }
+  .field input, .field select, .field textarea{
+    width:100%; background:#0e0e10; border:1px solid var(--line-strong); border-radius:12px;
+    padding:13px 15px; color:#fff; font-family:inherit; font-size:14.5px; outline:none;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--gold); background:#121214; }
+  .field textarea{ resize:vertical; min-height:100px; }
+  .form-note{ font-size:12.5px; color:var(--text-faint); margin-top:14px; text-align:center; }
+  .form-success{ display:none; background:#132018; border:1px solid rgba(127,227,163,.3); color:#8ff0ac; padding:14px 16px; border-radius:12px; font-size:14px; margin-bottom:18px; align-items:center; gap:10px; }
+  .form-success.show{ display:flex; }
+
+  .info-card{ background:var(--bg-soft); border:1px solid var(--line); border-radius:var(--radius); padding:30px; margin-bottom:20px; }
+  .info-row{ display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid var(--line); }
+  .info-row:last-child{ border-bottom:none; }
+  .info-row .ic{ width:42px;height:42px;border-radius:12px;background:var(--gold-dim); color:var(--gold-light); display:flex;align-items:center;justify-content:center; flex:none; }
+  .info-row b{ display:block; font-size:14.5px; margin-bottom:2px; }
+  .info-row span, .info-row a{ font-size:13.5px; color:var(--text-dim); }
+  .info-row a:hover{ color:var(--gold-light); }
+  .hours-table{ width:100%; border-collapse:collapse; font-size:14px; }
+  .hours-table td{ padding:9px 0; border-bottom:1px solid var(--line); color:var(--text-dim); }
+  .hours-table tr:last-child td{ border-bottom:none; }
+  .hours-table td:last-child{ text-align:start; color:#f0eee8; font-weight:600; }
+  .map-wrap{ border-radius:18px; overflow:hidden; border:1px solid var(--line-strong); height:220px; position:relative; }
+  .map-wrap iframe{ width:100%; height:100%; border:0; filter:grayscale(.3) invert(.92) contrast(.9); }
+  .map-fallback{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(160deg,#16151a,#0a0a0b); flex-direction:column; gap:10px; text-align:center; padding:20px; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ background:#08080a; border-top:1px solid var(--line); padding:70px 0 30px; }
+  .foot-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; margin-bottom:50px; }
+  .foot-about p{ color:var(--text-faint); font-size:14px; margin:16px 0 20px; max-width:280px; }
+  .foot-social{ display:flex; gap:10px; }
+  .foot-social a{ width:38px;height:38px;border-radius:10px; border:1px solid var(--line-strong); display:flex;align-items:center;justify-content:center; transition:border-color .2s, background .2s; }
+  .foot-social a:hover{ border-color:var(--gold); background:var(--gold-dim); }
+  .foot-col h4{ font-size:14px; color:#fff; margin:0 0 18px; letter-spacing:.5px; }
+  .foot-col ul li{ margin-bottom:12px; }
+  .foot-col a{ font-size:14px; color:var(--text-dim); transition:color .2s; }
+  .foot-col a:hover{ color:var(--gold-light); }
+  .foot-bottom{ border-top:1px solid var(--line); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; color:var(--text-faint); font-size:13px; }
+
+  /* ---------- WHATSAPP FLOAT ---------- */
+  .wa-float{
+    position:fixed; bottom:24px; inset-inline-end:24px; z-index:90;
+    width:60px;height:60px;border-radius:50%; background:#25D366; display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 30px rgba(37,211,102,.4); transition:transform .25s ease;
+  }
+  .wa-float:hover{ transform:scale(1.08); }
+
+  @media (max-width: 980px){
+    .nav-links, .nav-cta .btn-outline{ display:none; }
+    .burger{ display:flex; }
+    .hero-grid, .intro-grid, .about-grid, .contact-grid{ grid-template-columns:1fr; }
+    .hero-visual{ order:-1; max-width:380px; margin:0 auto; }
+    .services-grid{ grid-template-columns:repeat(2,1fr); }
+    .why-grid{ grid-template-columns:repeat(2,1fr); }
+    .rev-grid{ grid-template-columns:1fr; }
+    .gal-grid{ grid-template-columns:repeat(2,1fr); grid-auto-rows:140px; }
+    .foot-grid{ grid-template-columns:1fr 1fr; }
+    .cta-banner{ margin:0 16px; padding:50px 24px; }
+  }
+  @media (max-width:600px){
+    .services-grid{ grid-template-columns:1fr; }
+    .why-grid{ grid-template-columns:1fr 1fr; }
+    .form-row{ grid-template-columns:1fr; }
+    .foot-grid{ grid-template-columns:1fr; }
+    .hero-stats{ gap:24px; }
+    .gal-item.big{ grid-column:span 2; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header id="siteHeader">
+  <div class="container">
+    <nav>
+      <a href="#home" class="logo"><span class="mark">N</span>NOVA <b>BARBER</b></a>
+      <div class="nav-links">
+        <a href="#home">בית</a>
+        <a href="#services">שירותים</a>
+        <a href="#gallery">גלריה</a>
+        <a href="#about">אודות</a>
+        <a href="#contact">יצירת קשר</a>
+      </div>
+      <div class="nav-cta">
+        <a class="btn btn-outline" href="#contact">קביעת תור</a>
+        <button class="burger" id="burgerBtn" aria-label="פתח תפריט" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<div class="mobile-panel" id="mobilePanel">
+  <a href="#home">בית</a>
+  <a href="#services">שירותים</a>
+  <a href="#gallery">גלריה</a>
+  <a href="#about">אודות</a>
+  <a href="#contact">יצירת קשר</a>
+  <a class="btn btn-gold btn-block" href="#contact">קביעת תור</a>
+</div>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="home">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="reveal in">
+        <div class="eyebrow">מספרת גברים פרימיום · תל אביב</div>
+        <h1>הסטייל שלך<br><span>מתחיל כאן.</span></h1>
+        <p class="lead">ב-NOVA BARBER תמצאו תספורות מדויקות, עיצוב זקן מקצועי וטיפוח גברי ברמה הגבוהה ביותר — בסביבה אלגנטית, על ידי ברברים שמבינים סטייל.</p>
+        <div class="hero-ctas">
+          <a href="#contact" class="btn btn-gold">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 2v4M16 2v4M3 10h18M5 6h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            קביעת תור
+          </a>
+          <a href="https://wa.me/972500000000?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A7%D7%91%D7%95%D7%A2%20%D7%AA%D7%95%D7%A8%20%D7%91-NOVA%20BARBER" target="_blank" rel="noopener" class="btn btn-wa">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.44 1.33 4.94L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.5 0 9.96-4.46 9.96-9.96S17.55 2 12.05 2Zm5.8 14.13c-.24.68-1.4 1.32-1.93 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.95-.31-1.63-.6-2.86-1.24-4.73-4.12-4.87-4.31-.14-.19-1.17-1.55-1.17-2.96s.73-2.1 1-2.39c.26-.28.57-.35.76-.35h.55c.18 0 .42-.07.65.5.24.58.82 1.99.9 2.13.07.15.12.32.02.51-.09.19-.14.31-.28.48-.14.16-.29.36-.42.49-.14.14-.29.29-.12.57.16.28.73 1.2 1.57 1.95 1.08.96 1.98 1.26 2.27 1.4.29.14.46.12.63-.07.17-.2.71-.83.9-1.11.19-.28.37-.23.63-.14.26.1 1.67.79 1.95.93.29.14.48.21.55.33.07.12.07.68-.17 1.36Z"/></svg>
+            שלחו WhatsApp
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div><b>+800</b><span>לקוחות מרוצים</span></div>
+          <div><b>9 שנים</b><span>ניסיון מקצועי</span></div>
+          <div><b>4.9★</b><span>דירוג ממוצע</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal in">
+        <div class="float-chip c1">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="color:var(--gold-light)"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="0" fill="none"/><path d="M14.5 5.5 8 12l2 2 6.5-6.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+          <div><b>עיצוב זקן חד</b><span>דיוק בלייזר</span></div>
+        </div>
+        <div class="hero-card">
+          <svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#242224"/>
+                <stop offset="100%" stop-color="#0a0a0b"/>
+              </linearGradient>
+              <radialGradient id="g2" cx="30%" cy="20%" r="70%">
+                <stop offset="0%" stop-color="#cba35c" stop-opacity=".45"/>
+                <stop offset="100%" stop-color="#cba35c" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect width="400" height="500" fill="url(#g1)"/>
+            <rect width="400" height="500" fill="url(#g2)"/>
+            <g opacity=".9" stroke="#cba35c" stroke-width="2" fill="none">
+              <circle cx="200" cy="190" r="90"/>
+              <path d="M140 190a60 60 0 1 1 120 0" />
+              <path d="M120 320 L280 320" stroke-opacity=".4"/>
+              <path d="M150 360 L250 360" stroke-opacity=".25"/>
+            </g>
+            <g transform="translate(160,150)" stroke="#f3f1ec" stroke-width="4" fill="none" stroke-linecap="round">
+              <circle cx="12" cy="60" r="10"/>
+              <circle cx="60" cy="76" r="10"/>
+              <path d="M20 52 L74 8"/>
+              <path d="M20 68 L90 108"/>
+              <path d="M40 60 L80 60" stroke-opacity=".5"/>
+            </g>
+          </svg>
+          <div class="hero-badge">
+            <span class="dot"></span>
+            <div><b>פתוח עכשיו</b><span>תורים זמינים היום</span></div>
+          </div>
+        </div>
+        <div class="float-chip c2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="color:var(--gold-light)"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.2 21 12 17.77 5.8 21 7 14.14 2 9.27l7.1-1.01Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <div><b>4.9 מתוך 5</b><span>+300 ביקורות</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INTRO ================= -->
+<section class="intro">
+  <div class="container">
+    <div class="intro-grid">
+      <div class="intro-copy reveal">
+        <div class="eyebrow">מי אנחנו</div>
+        <h2 class="section-title">לא עוד תספורת. <span class="gold">חוויה.</span></h2>
+        <p>NOVA BARBER היא מספרת גברים המשלבת מקצועיות, דיוק ואווירה יוקרתית. אנחנו מאמינים שתספורת טובה היא הרבה יותר מטרנד — היא ביטחון עצמי שהולך איתך לכל מקום.</p>
+        <p>הצוות שלנו מורכב מברברים מנוסים שעברו הכשרות מקצועיות, עובדים עם כלים איכותיים ומקפידים על כל פרט — מהגזרה ועד השטיפה האחרונה.</p>
+        <ul class="intro-points">
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> ברברים מוסמכים עם ניסיון של שנים</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> מוצרי טיפוח פרימיום בלבד</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> אווירה נעימה ומקצועית</li>
+        </ul>
+      </div>
+      <div class="intro-visual reveal">
+        <svg width="70%" viewBox="0 0 200 200" fill="none">
+          <circle cx="100" cy="100" r="94" stroke="#cba35c" stroke-width="1.2" stroke-opacity=".5"/>
+          <circle cx="100" cy="100" r="70" stroke="#cba35c" stroke-width="1.2" stroke-opacity=".3"/>
+          <path d="M60 70 L140 130 M140 70 L60 130" stroke="#f3f1ec" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="60" cy="70" r="8" stroke="#cba35c" stroke-width="3"/>
+          <circle cx="60" cy="130" r="8" stroke="#cba35c" stroke-width="3"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SERVICES ================= -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="eyebrow reveal">השירותים שלנו</div>
+    <h2 class="section-title reveal">מחירון ברור, <span class="gold">בלי הפתעות</span></h2>
+    <p class="section-lead reveal">כל שירות מבוצע בקפידה, בזמן שנקבע מראש, על ידי ברבר מקצועי. בחרו את השירות המתאים לכם וקבעו תור בקליק.</p>
+
+    <div class="services-grid">
+      <div class="svc-card reveal">
+        <div class="svc-top">
+          <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM6 12v6a3 3 0 1 0 0-6ZM9 9l12-5M9 15l12 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+          <div class="svc-price">70 <small>₪</small></div>
+        </div>
+        <h3>תספורת גבר</h3>
+        <p>תספורה מדויקת בהתאמה אישית לצורת הפנים והסגנון שלכם, כולל עיצוב וגימור מושלם.</p>
+        <a href="#contact" class="btn btn-outline btn-block">קביעת תור</a>
+      </div>
+
+      <div class="svc-card reveal">
+        <div class="svc-top">
+          <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v6a8 8 0 0 1-16 0V4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 20h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+          <div class="svc-price">100 <small>₪</small></div>
+        </div>
+        <h3>תספורת + זקן</h3>
+        <p>החבילה השלמה: תספורה מקצועית בשילוב עיצוב זקן מדויק לגימור אחיד ומרשים.</p>
+        <a href="#contact" class="btn btn-outline btn-block">קביעת תור</a>
+      </div>
+
+      <div class="svc-card reveal">
+        <div class="svc-top">
+          <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 3 5 6 5 10a5 5 0 0 1-10 0c0-4 2-7 5-10Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></div>
+          <div class="svc-price">50 <small>₪</small></div>
+        </div>
+        <h3>עיצוב זקן</h3>
+        <p>עיצוב וקיצוץ זקן בקווים חדים, כולל יישור קצוות וטיפוח בשמן זקן מקצועי.</p>
+        <a href="#contact" class="btn btn-outline btn-block">קביעת תור</a>
+      </div>
+
+      <div class="svc-card reveal">
+        <div class="svc-top">
+          <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2c-1.5 2-3 3.5-3 6a3 3 0 0 0 6 0c0-2.5-1.5-4-3-6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6 14c1 4 4 7 6 7s5-3 6-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+          <div class="svc-price">60 <small>₪</small></div>
+        </div>
+        <h3>תספורת ילדים</h3>
+        <p>תספורת סבלנית ונעימה לילדים, בסביבה ידידותית ובזמן מותאם.</p>
+        <a href="#contact" class="btn btn-outline btn-block">קביעת תור</a>
+      </div>
+
+      <div class="svc-card vip reveal">
+        <span class="svc-tag">הכי מבוקש</span>
+        <div class="svc-top">
+          <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2 15 9l7 1-5.2 4.9L18.2 22 12 18.3 5.8 22l1.4-7.1L2 10l7-1 3-7Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+          <div class="svc-price">150 <small>₪</small></div>
+        </div>
+        <h3>VIP Grooming</h3>
+        <p>חבילת הפרימיום שלנו: תספורה, עיצוב זקן, טיפוח פנים, מגבת חמה ומשקה על הבית.</p>
+        <a href="#contact" class="btn btn-gold btn-block">קביעת תור VIP</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHY ================= -->
+<section class="why">
+  <div class="container">
+    <div class="eyebrow reveal">למה NOVA BARBER</div>
+    <h2 class="section-title reveal">היתרונות שעושים <span class="gold">את ההבדל</span></h2>
+    <p class="section-lead reveal">אנחנו לא רק מספרה — אנחנו חוויה שלמה שנבנתה סביב הלקוח.</p>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2 15 9l7 1-5.2 4.9L18.2 22 12 18.3 5.8 22l1.4-7.1L2 10l7-1 3-7Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+        <h3>מקצועיות ללא פשרות</h3>
+        <p>ברברים מיומנים עם שנות ניסיון והכשרה מתמדת בטכניקות עדכניות.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/></svg></div>
+        <h3>עמידה בזמנים</h3>
+        <p>מערכת תורים מסודרת שחוסכת לכם זמן המתנה מיותר.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.5-9.5-9C.7 8 2 4 6 4c2 0 3.5 1 4 2 .5-1 2-2 4-2 4 0 5.3 4 3.5 8-2.5 4.5-9.5 9-9.5 9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+        <h3>שירות אישי וחם</h3>
+        <p>כל לקוח מקבל התייחסות אישית והקשבה אמיתית לצרכים שלו.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 3v18h18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="m7 14 4-4 3 3 5-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>תוצאות שנשארות</h3>
+        <p>גזרות מדויקות שמחזיקות מעמד ונראות טוב יום אחרי יום.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GALLERY ================= -->
+<section class="gallery" id="gallery">
+  <div class="container">
+    <div class="eyebrow reveal">גלריה</div>
+    <h2 class="section-title reveal">העבודות <span class="gold">מדברות בעד עצמן</span></h2>
+    <p class="section-lead reveal">מבחר מהעבודות והרגעים מהסלון — סטייל, דיוק ותשומת לב לפרטים.</p>
+
+    <div class="gal-grid">
+      <div class="gal-item big reveal">
+        <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid slice"><rect width="300" height="300" fill="#161519"/><circle cx="150" cy="120" r="70" fill="none" stroke="#cba35c" stroke-width="2" opacity=".7"/><path d="M110 220h80M100 240h100" stroke="#cba35c" stroke-width="2" opacity=".3"/><path d="M120 90c10-20 50-20 60 0" stroke="#f3f1ec" stroke-width="3" fill="none"/></svg>
+        <span class="gal-label">תספורת מודרנית</span>
+      </div>
+      <div class="gal-item reveal">
+        <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid slice"><rect width="300" height="300" fill="#1a1712"/><path d="M150 60c-20 30-30 55-30 85a30 30 0 0 0 60 0c0-30-10-55-30-85Z" fill="none" stroke="#cba35c" stroke-width="2.2"/></svg>
+        <span class="gal-label">עיצוב זקן</span>
+      </div>
+      <div class="gal-item reveal">
+        <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid slice"><rect width="300" height="300" fill="#141416"/><rect x="60" y="60" width="180" height="180" fill="none" stroke="#cba35c" stroke-width="1.5" opacity=".6"/><circle cx="150" cy="150" r="55" fill="none" stroke="#f3f1ec" stroke-width="1.5" opacity=".5"/></svg>
+        <span class="gal-label">חלל הסלון</span>
+      </div>
+      <div class="gal-item reveal">
+        <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid slice"><rect width="300" height="300" fill="#15161a"/><path d="M90 210 L210 90" stroke="#cba35c" stroke-width="3" stroke-linecap="round"/><path d="M90 90 L150 150" stroke="#f3f1ec" stroke-width="3" stroke-linecap="round" opacity=".7"/></svg>
+        <span class="gal-label">ברבר בעבודה</span>
+      </div>
+      <div class="gal-item reveal">
+        <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid slice"><rect width="300" height="300" fill="#181613"/><path d="M80 150h60M160 150h60" stroke="#cba35c" stroke-width="2"/><path d="M140 150a10 10 0 1 0 20 0 10 10 0 0 0-20 0Z" fill="#cba35c"/></svg>
+        <span class="gal-label">לפני / אחרי</span>
+      </div>
+      <div class="gal-item big reveal">
+        <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid slice"><rect width="300" height="300" fill="#131315"/><circle cx="150" cy="150" r="90" fill="none" stroke="#cba35c" stroke-width="1.4" opacity=".5"/><circle cx="150" cy="150" r="55" fill="none" stroke="#cba35c" stroke-width="1.4" opacity=".3"/><path d="M115 140c10-14 60-14 70 0" stroke="#f3f1ec" stroke-width="3" fill="none"/></svg>
+        <span class="gal-label">VIP Grooming</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REVIEWS ================= -->
+<section class="reviews">
+  <div class="container">
+    <div class="eyebrow reveal">לקוחות ממליצים</div>
+    <h2 class="section-title reveal">מאות לקוחות <span class="gold">מרוצים</span></h2>
+    <p class="section-lead reveal">אנחנו גאים באמון שהלקוחות שלנו נותנים בנו, שוב ושוב.</p>
+
+    <div class="rev-grid">
+      <div class="rev-card reveal">
+        <div class="stars">★★★★★</div>
+        <p>"הגעתי בפעם הראשונה ונשארתי קבוע. תשומת הלב לפרטים ברמה אחרת, והתוצאה תמיד מדויקת."</p>
+        <div class="rev-who">
+          <div class="rev-avatar">א</div>
+          <div><b>אורי כהן</b><span>לקוח קבוע</span></div>
+        </div>
+      </div>
+      <div class="rev-card reveal">
+        <div class="stars">★★★★★</div>
+        <p>"האווירה במקום מדהימה, השירות אדיב, וההמלצה על עיצוב הזקן שינתה לי את הלוק לגמרי."</p>
+        <div class="rev-who">
+          <div class="rev-avatar">ד</div>
+          <div><b>דניאל לוי</b><span>לקוח VIP</span></div>
+        </div>
+      </div>
+      <div class="rev-card reveal">
+        <div class="stars">★★★★★</div>
+        <p>"קביעת התור הייתה קלה ומהירה בוואטסאפ, והגעתי בול בזמן. ברמה מקצועית שלא מוצאים כל יום."</p>
+        <div class="rev-who">
+          <div class="rev-avatar">מ</div>
+          <div><b>מאור אברהם</b><span>לקוח חדש</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <svg width="100%" height="100%" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice">
+          <rect width="300" height="400" fill="#101012"/>
+          <circle cx="150" cy="150" r="110" fill="none" stroke="#cba35c" stroke-width="1" opacity=".4"/>
+          <path d="M100 150c15-40 85-40 100 0" stroke="#f3f1ec" stroke-width="3" fill="none"/>
+          <path d="M90 300h120" stroke="#cba35c" stroke-width="2" opacity=".5"/>
+          <path d="M110 320h80" stroke="#cba35c" stroke-width="2" opacity=".3"/>
+        </svg>
+      </div>
+      <div class="about-copy reveal">
+        <div class="eyebrow">הסיפור שלנו</div>
+        <h2 class="section-title">נבנה על <span class="gold">דיוק ותשוקה</span></h2>
+        <p>NOVA BARBER נולדה מתוך אהבה אמיתית למקצוע הברברות ומתוך אמונה שכל גבר ראוי לתספורת שמבטאת אותו. התחלנו ככיסא אחד בסלון קטן, ועם הזמן הפכנו לכתובת המובילה לגברים שמחפשים שילוב של סטייל, דיוק ושירות אישי.</p>
+        <div class="about-quote">"אנחנו לא סתם חותכים שיער — אנחנו בונים ביטחון."</div>
+        <p>היום הצוות שלנו כולל ברברים מנוסים שעברו הכשרות מקצועיות בארץ ובעולם, ועובדים אך ורק עם כלים וחומרים איכותיים. כל תור אצלנו הוא הזדמנות להעניק ללקוח את הגרסה הכי טובה של עצמו.</p>
+        <div class="about-numbers">
+          <div><b>9+</b><span>שנות ניסיון</span></div>
+          <div><b>800+</b><span>לקוחות מרוצים</span></div>
+          <div><b>4.9</b><span>דירוג ממוצע</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA BANNER ================= -->
+<section style="padding:40px 0;">
+  <div class="cta-banner reveal">
+    <h2>מוכנים לשדרג את הלוק שלכם?</h2>
+    <p>קבעו תור עוד היום וקבלו את החוויה שגברים רבים כבר מכירים.</p>
+    <div class="row">
+      <a href="#contact" class="btn btn-gold">קביעת תור עכשיו</a>
+      <a href="https://wa.me/972500000000?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A7%D7%91%D7%95%D7%A2%20%D7%AA%D7%95%D7%A8%20%D7%91-NOVA%20BARBER" target="_blank" rel="noopener" class="btn btn-outline">שלחו WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="eyebrow reveal">יצירת קשר וקביעת תור</div>
+    <h2 class="section-title reveal">בואו <span class="gold">נקבע תור</span></h2>
+    <p class="section-lead reveal">מלאו את הפרטים ונחזור אליכם, או פנו אלינו ישירות בוואטסאפ / טלפון.</p>
+
+    <div class="contact-grid">
+      <div class="form-card reveal">
+        <div class="form-success" id="formSuccess">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          הפנייה הוכנה בהצלחה — נפתח לכם WhatsApp לאישור סופי.
+        </div>
+        <form id="bookingForm">
+          <div class="form-row">
+            <div class="field">
+              <label for="name">שם מלא *</label>
+              <input id="name" name="name" type="text" placeholder="לדוגמה: יוסי ישראלי" required />
+            </div>
+            <div class="field">
+              <label for="phone">טלפון *</label>
+              <input id="phone" name="phone" type="tel" placeholder="05X-XXXXXXX" required pattern="[0-9\-\s]{9,13}" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="date">תאריך מועדף *</label>
+              <input id="date" name="date" type="date" required />
+            </div>
+            <div class="field">
+              <label for="time">שעה מועדפת *</label>
+              <input id="time" name="time" type="time" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="service">סוג שירות *</label>
+            <select id="service" name="service" required>
+              <option value="">בחרו שירות</option>
+              <option>תספורת גבר — 70 ₪</option>
+              <option>תספורת + זקן — 100 ₪</option>
+              <option>עיצוב זקן — 50 ₪</option>
+              <option>תספורת ילדים — 60 ₪</option>
+              <option>VIP Grooming — 150 ₪</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="message">הערות נוספות</label>
+            <textarea id="message" name="message" placeholder="יש בקשה מיוחדת? ספרו לנו כאן..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-gold btn-block">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.44 1.33 4.94L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.5 0 9.96-4.46 9.96-9.96S17.55 2 12.05 2Zm5.8 14.13c-.24.68-1.4 1.32-1.93 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.95-.31-1.63-.6-2.86-1.24-4.73-4.12-4.87-4.31-.14-.19-1.17-1.55-1.17-2.96s.73-2.1 1-2.39c.26-.28.57-.35.76-.35h.55c.18 0 .42-.07.65.5.24.58.82 1.99.9 2.13.07.15.12.32.02.51-.09.19-.14.31-.28.48-.14.16-.29.36-.42.49-.14.14-.29.29-.12.57.16.28.73 1.2 1.57 1.95 1.08.96 1.98 1.26 2.27 1.4.29.14.46.12.63-.07.17-.2.71-.83.9-1.11.19-.28.37-.23.63-.14.26.1 1.67.79 1.95.93.29.14.48.21.55.33.07.12.07.68-.17 1.36Z"/></svg>
+            שליחה ואישור בוואטסאפ
+          </button>
+          <p class="form-note">בלחיצה על הכפתור ייפתח WhatsApp עם פרטי הבקשה שלכם לאישור סופי מולנו.</p>
+        </form>
+      </div>
+
+      <div class="reveal">
+        <div class="info-card">
+          <div class="info-row">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+            <div><b>טלפון</b><a href="tel:+972500000000">050-000-0000</a></div>
+          </div>
+          <div class="info-row">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.44 1.33 4.94L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.5 0 9.96-4.46 9.96-9.96S17.55 2 12.05 2Z"/></svg></div>
+            <div><b>WhatsApp</b><a href="https://wa.me/972500000000" target="_blank" rel="noopener">שליחת הודעה מיידית</a></div>
+          </div>
+          <div class="info-row">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-5.5 7-12a7 7 0 1 0-14 0c0 6.5 7 12 7 12Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.6"/></svg></div>
+            <div><b>כתובת</b><span>רחוב דיזנגוף 100, תל אביב</span></div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <b style="display:block;margin-bottom:14px;font-size:15px;">שעות פתיחה</b>
+          <table class="hours-table">
+            <tr><td>ראשון – חמישי</td><td>09:00 – 20:00</td></tr>
+            <tr><td>שישי</td><td>09:00 – 15:00</td></tr>
+            <tr><td>שבת</td><td>סגור</td></tr>
+          </table>
+        </div>
+
+        <div class="map-wrap">
+          <iframe
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=Dizengoff%20100%2C%20Tel%20Aviv&output=embed"
+            title="מיקום NOVA BARBER על המפה">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-about">
+        <a href="#home" class="logo"><span class="mark">N</span>NOVA <b>BARBER</b></a>
+        <p>מספרת גברים פרימיום המשלבת דיוק, סטייל ושירות אישי. הסטייל שלך מתחיל כאן.</p>
+        <div class="foot-social">
+          <a href="https://wa.me/972500000000" target="_blank" rel="noopener" aria-label="WhatsApp"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.44 1.33 4.94L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.5 0 9.96-4.46 9.96-9.96S17.55 2 12.05 2Z"/></svg></a>
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg></a>
+          <a href="tel:+972500000000" aria-label="טלפון"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>ניווט</h4>
+        <ul>
+          <li><a href="#home">בית</a></li>
+          <li><a href="#services">שירותים</a></li>
+          <li><a href="#gallery">גלריה</a></li>
+          <li><a href="#about">אודות</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>שירותים</h4>
+        <ul>
+          <li><a href="#services">תספורת גבר</a></li>
+          <li><a href="#services">תספורת + זקן</a></li>
+          <li><a href="#services">עיצוב זקן</a></li>
+          <li><a href="#services">VIP Grooming</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>יצירת קשר</h4>
+        <ul>
+          <li><a href="tel:+972500000000">050-000-0000</a></li>
+          <li><a href="https://wa.me/972500000000" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="#contact">רחוב דיזנגוף 100, ת״א</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="year"></span> NOVA BARBER — כל הזכויות שמורות.</span>
+      <span>עוצב ופותח באהבה לסטייל.</span>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/972500000000?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A7%D7%91%D7%95%D7%A2%20%D7%AA%D7%95%D7%A8%20%D7%91-NOVA%20BARBER" target="_blank" rel="noopener" class="wa-float" aria-label="שלחו הודעת וואטסאפ">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="#08120b"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.44 1.33 4.94L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.5 0 9.96-4.46 9.96-9.96S17.55 2 12.05 2Zm5.8 14.13c-.24.68-1.4 1.32-1.93 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.95-.31-1.63-.6-2.86-1.24-4.73-4.12-4.87-4.31-.14-.19-1.17-1.55-1.17-2.96s.73-2.1 1-2.39c.26-.28.57-.35.76-.35h.55c.18 0 .42-.07.65.5.24.58.82 1.99.9 2.13.07.15.12.32.02.51-.09.19-.14.31-.28.48-.14.16-.29.36-.42.49-.14.14-.29.29-.12.57.16.28.73 1.2 1.57 1.95 1.08.96 1.98 1.26 2.27 1.4.29.14.46.12.63-.07.17-.2.71-.83.9-1.11.19-.28.37-.23.63-.14.26.1 1.67.79 1.95.93.29.14.48.21.55.33.07.12.07.68-.17 1.36Z"/></svg>
+</a>
+
+<script>
+  // header scroll state
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 30);
+  }, { passive: true });
+
+  // mobile menu
+  const burger = document.getElementById('burgerBtn');
+  const panel = document.getElementById('mobilePanel');
+  burger.addEventListener('click', () => {
+    const open = panel.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  panel.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    panel.classList.remove('open');
+    burger.setAttribute('aria-expanded', 'false');
+  }));
+
+  // reveal on scroll
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // footer year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // booking form -> WhatsApp
+  const form = document.getElementById('bookingForm');
+  const successBox = document.getElementById('formSuccess');
+  const WHATSAPP_NUMBER = '972500000000';
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const name = data.get('name').trim();
+    const phone = data.get('phone').trim();
+    const date = data.get('date');
+    const time = data.get('time');
+    const service = data.get('service');
+    const message = data.get('message').trim();
+
+    const lines = [
+      'היי NOVA BARBER, אשמח לקבוע תור 💈',
+      `שם: ${name}`,
+      `טלפון: ${phone}`,
+      `תאריך מועדף: ${date}`,
+      `שעה מועדפת: ${time}`,
+      `שירות: ${service}`,
+    ];
+    if (message) lines.push(`הערות: ${message}`);
+
+    const text = encodeURIComponent(lines.join('\n'));
+    successBox.classList.add('show');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
+    form.reset();
+    setTimeout(() => successBox.classList.remove('show'), 6000);
+  });
+
+  // set min date to today
+  document.getElementById('date').min = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
