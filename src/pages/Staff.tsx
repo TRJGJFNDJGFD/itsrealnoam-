@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import PixelScene from "../components/PixelScene";
 import { SITE_CONFIG } from "../config/site";
 import { STAFF_CATEGORIES } from "../config/staff";
+import StaffMemberRow from "../components/status/StaffMemberRow";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -52,11 +53,9 @@ export default function Staff() {
                 </div>
 
                 {category.members.length > 0 ? (
-                  <ul className="mt-4 flex flex-col gap-1.5">
-                    {category.members.map((name) => (
-                      <li key={name} className="text-base text-text-primary">
-                        {name}
-                      </li>
+                  <ul className="mt-4 flex flex-col gap-2">
+                    {category.members.map((member) => (
+                      <StaffMemberRow key={member.uuid ?? member.username} member={member} />
                     ))}
                   </ul>
                 ) : category.recruiting ? (
