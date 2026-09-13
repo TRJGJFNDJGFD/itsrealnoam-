@@ -43,6 +43,11 @@
       "skillPath": "skills/find-animation-opportunities/SKILL.md",
       "computedHash": "8fb8492eb8fbed1313cb430b5831d925d9b8964ca24f3c41a6244cbd1fd98732"
     },
+    "hyperframes-best-practices": {
+      "source": "skills-il/developer-tools",
+      "sourceType": "github",
+      "computedHash": "9ad73b189c2d69ba9b19ea9946e7243790b3df2556706cc6dccd1d19235e82c8"
+    },
     "improve-animations": {
       "source": "emilkowalski/skill",
       "sourceType": "github",
