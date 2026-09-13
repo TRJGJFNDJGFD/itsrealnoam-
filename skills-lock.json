@@ -49,6 +49,11 @@
       "skillPath": "skills/improve-animations/SKILL.md",
       "computedHash": "eeb219a407e325b687af88db25771cc3018e3148245604112f5ac6990b6fd79c"
     },
+    "israeli-ui-design-system": {
+      "source": "skills-il/localization",
+      "sourceType": "github",
+      "computedHash": "4417d22a7fbb7701eed14f3241bbc71c4bacff084e8b150d099396e9198bacf0"
+    },
     "pick-ui-library": {
       "source": "emilkowalski/skill",
       "sourceType": "github",
