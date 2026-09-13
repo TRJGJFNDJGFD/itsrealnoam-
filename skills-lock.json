@@ -66,6 +66,11 @@
       "skillPath": "skills/prototype/SKILL.md",
       "computedHash": "f246d1f47566481d9207e1aa574bdee5454257d862919a6591283e9af2f57eab"
     },
+    "remotion-best-practices": {
+      "source": "skills-il/developer-tools",
+      "sourceType": "github",
+      "computedHash": "308d53902b62e664f704c3b85bac0e152759d5ead0751cbff61e4bd1103195de"
+    },
     "review-animations": {
       "source": "emilkowalski/skill",
       "sourceType": "github",
