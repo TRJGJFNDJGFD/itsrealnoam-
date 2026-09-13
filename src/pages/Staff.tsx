@@ -3,7 +3,8 @@ import { MessageCircle, ShieldCheck } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PixelScene from "../components/PixelScene";
-import { STAFF } from "../config/staff";
+import { SITE_CONFIG } from "../config/site";
+import { STAFF_CATEGORIES } from "../config/staff";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -33,43 +34,47 @@ export default function Staff() {
             </p>
           </motion.div>
 
-          {STAFF.length === 0 ? (
-            <p className="border border-border bg-surface p-6 text-sm text-text-secondary">
-              The team list hasn't been filled in yet.
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {STAFF.map((member, i) => (
-                <motion.div
-                  key={member.name}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.15 + i * 0.06, ease }}
-                  whileHover={{ y: -3 }}
-                  className="border border-border bg-surface p-6 transition-colors duration-300 hover:border-accent/20 hover:bg-surface-light"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <ShieldCheck size={18} className="text-accent" />
-                    <h3 className="text-lg font-semibold text-white-pure">{member.name}</h3>
-                  </div>
-                  <p className="mt-1 text-xs font-semibold tracking-[0.1em] text-text-secondary">
-                    {member.role.toUpperCase()}
-                  </p>
-                  {member.discord && (
-                    <a
-                      href={member.discord}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="focus-ring mt-4 inline-flex items-center gap-1.5 text-xs font-semibold tracking-wide text-text-muted transition-colors hover:text-accent"
-                    >
-                      <MessageCircle size={14} />
-                      DISCORD
-                    </a>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {STAFF_CATEGORIES.map((category, i) => (
+              <motion.div
+                key={category.role}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.15 + i * 0.04, ease }}
+                whileHover={{ y: -3 }}
+                className="border border-border bg-surface p-6 transition-colors duration-300 hover:border-accent/20 hover:bg-surface-light"
+              >
+                <div className="flex items-center gap-2.5">
+                  <ShieldCheck size={18} className="text-accent" />
+                  <h3 className="text-sm font-semibold tracking-[0.1em] text-white-pure">
+                    {category.role.toUpperCase()}
+                  </h3>
+                </div>
+
+                {category.members.length > 0 ? (
+                  <ul className="mt-4 flex flex-col gap-1.5">
+                    {category.members.map((name) => (
+                      <li key={name} className="text-base text-text-primary">
+                        {name}
+                      </li>
+                    ))}
+                  </ul>
+                ) : category.recruiting ? (
+                  <a
+                    href={SITE_CONFIG.discord}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="focus-ring mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent transition-colors hover:text-accent/80"
+                  >
+                    <MessageCircle size={14} />
+                    Recruiting — apply on Discord
+                  </a>
+                ) : (
+                  <p className="mt-4 text-sm text-text-muted">Vacant</p>
+                )}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </motion.main>
 
