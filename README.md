@@ -271,3 +271,10 @@ adding fake numbers back in would violate the whole point of this rework.
   are documented inline in `src/` — see `src/lib/router.ts` for the tiny client-side
   router and `src/config/site.ts` for the single source of truth on the server IP,
   Discord invite, and vote link.
+- `/staff` reads from `src/config/staff.ts` — fill in the real team there (name, role,
+  optional Discord link). The page shows "hasn't been filled in yet" until you do; no
+  placeholder people are shown.
+- The "Notify me" toggle on `/status` (`src/lib/useStatusNotifications.ts`) uses the
+  browser's own Notification API — no server, email, or push service involved. It only
+  fires while the tab is open and the opt-in is remembered per-browser via
+  `localStorage`.

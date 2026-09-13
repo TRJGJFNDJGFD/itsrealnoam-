@@ -15,6 +15,7 @@ export default function Footer() {
   const links = [
     ...SECTION_LINKS.map((link) => ({ ...link, href: onHomePage ? link.href : `/${link.href}` })),
     { label: "STATUS", href: "/status" },
+    { label: "STAFF", href: "/staff" },
     ...(SITE_CONFIG.vote ? [{ label: "VOTE", href: SITE_CONFIG.vote }] : []),
     { label: "DISCORD", href: SITE_CONFIG.discord },
   ];

@@ -7,6 +7,7 @@ import StatusHeader, { type StatusVariant } from "../components/status/StatusHea
 import NetworkOverview from "../components/status/NetworkOverview";
 import ServerGrid from "../components/status/ServerGrid";
 import PopularServers from "../components/status/PopularServers";
+import NotifyToggle from "../components/status/NotifyToggle";
 import { useNetworkStatus } from "../lib/useNetworkStatus";
 
 function resolveVariant(reachable: boolean, status: "online" | "offline" | undefined, serversOnline: number | null, serversTotal: number | null): StatusVariant {
@@ -36,6 +37,10 @@ function StatusDashboard() {
 
         <div className="relative mx-auto flex max-w-(--container-page) flex-col gap-10 px-6 lg:px-10">
           <StatusHeader variant={variant} lastUpdated={data?.lastUpdated ?? null} />
+
+          <div className="flex justify-end">
+            <NotifyToggle />
+          </div>
 
           {!data && lastFetchedAt === null && (
             <p className="text-sm text-text-muted">Loading network status…</p>

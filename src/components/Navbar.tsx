@@ -16,6 +16,7 @@ const SECTION_LINKS: { label: string; href: string }[] = [
 ];
 
 const STATUS_LINK = { label: "STATUS", href: "/status" };
+const STAFF_LINK = { label: "STAFF", href: "/staff" };
 
 export default function Navbar() {
   const pathname = useRoute();
@@ -28,6 +29,7 @@ export default function Navbar() {
       href: onHomePage ? link.href : `/${link.href}`,
     })),
     STATUS_LINK,
+    STAFF_LINK,
   ];
 
   const [scrolled, setScrolled] = useState(false);
@@ -102,8 +104,10 @@ export default function Navbar() {
 
           <nav className="hidden items-center gap-9 md:flex" aria-label="Primary">
             {links.map((link, i) => {
-              const isStatusLink = link.href === "/status";
-              const isActive = isStatusLink ? !onHomePage : onHomePage && active === link.href;
+              const isPageLink = link.href === "/status" || link.href === "/staff";
+              const isActive = isPageLink
+                ? pathname.startsWith(link.href)
+                : onHomePage && active === link.href;
               return (
                 <motion.span
                   key={link.href}
