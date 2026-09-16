@@ -6,10 +6,17 @@
 import { Redis } from "@upstash/redis";
 import { HEARTBEAT_REDIS_KEY, type HeartbeatRecord } from "./_lib/types.js";
 
-// Kept generous rather than tight to the 3s heartbeat interval: a real
-// visitor doesn't care about the exact cutoff, only that a genuine outage
-// is still caught within well under a minute.
-const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 30_000);
+// Guards against an empty-string env var too, not just an unset one:
+// `Number(process.env.STALE_AFTER_MS ?? 15000)` would silently become 0
+// (and mark every heartbeat instantly stale) if the variable exists in
+// Vercel's dashboard but was left blank — `??` only falls back on
+// null/undefined, not on "".
+function parseStaleAfterMs(): number {
+  const raw = process.env.STALE_AFTER_MS;
+  const parsed = raw ? Number(raw) : NaN;
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 15_000;
+}
+const STALE_AFTER_MS = parseStaleAfterMs();
 
 export default {
   async fetch(request: Request) {
@@ -33,21 +40,7 @@ export default {
 
     const redis = Redis.fromEnv();
     const record = await redis.get<HeartbeatRecord>(HEARTBEAT_REDIS_KEY);
-    const serverNow = Date.now();
-    const ageMs = record ? serverNow - record.receivedAt : null;
-    const isFresh = record !== null && ageMs !== null && ageMs <= STALE_AFTER_MS;
-
-    // TEMPORARY: exposes the server's own freshness math directly in the
-    // response so this can be diagnosed without any client-clock guesswork.
-    const _debug = {
-      hasRecord: record !== null,
-      receivedAt: record?.receivedAt ?? null,
-      receivedAtType: typeof record?.receivedAt,
-      serverNow,
-      ageMs,
-      staleAfterMs: STALE_AFTER_MS,
-      isFresh,
-    };
+    const isFresh = record !== null && Date.now() - record.receivedAt <= STALE_AFTER_MS;
 
     if (!record || !isFresh) {
       return new Response(
@@ -59,7 +52,6 @@ export default {
           serversOnline: null,
           serversTotal: null,
           servers: [],
-          _debug,
         }),
         { status: 200, headers }
       );
@@ -76,7 +68,6 @@ export default {
         serversOnline,
         serversTotal: record.payload.servers.length,
         servers: record.payload.servers,
-        _debug,
       }),
       { status: 200, headers }
     );
