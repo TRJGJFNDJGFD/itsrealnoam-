@@ -6,7 +6,10 @@
 import { Redis } from "@upstash/redis";
 import { HEARTBEAT_REDIS_KEY, type HeartbeatRecord } from "./_lib/types.js";
 
-const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 15_000);
+// Kept generous rather than tight to the 3s heartbeat interval: a real
+// visitor doesn't care about the exact cutoff, only that a genuine outage
+// is still caught within well under a minute.
+const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 30_000);
 
 export default {
   async fetch(request: Request) {
