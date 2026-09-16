@@ -43,7 +43,7 @@ export default {
     const record: HeartbeatRecord = { payload: result.payload, receivedAt: Date.now() };
 
     await put(HEARTBEAT_BLOB_PATHNAME, JSON.stringify(record), {
-      access: "public",
+      access: "private",
       contentType: "application/json",
       allowOverwrite: true,
       addRandomSuffix: false,
