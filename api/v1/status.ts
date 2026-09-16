@@ -3,38 +3,23 @@
 // it, so no separate host or CORS story is needed for the site's own
 // fetches). WEBSITE_ORIGIN, if set, additionally allows other origins to
 // read this endpoint from a browser.
-import { list } from "@vercel/blob";
+import { get } from "@vercel/blob";
 import { HEARTBEAT_BLOB_PATHNAME, type HeartbeatRecord } from "./_lib/types.js";
 
-// 30s rather than a tighter window: Vercel Blob writes don't appear to be
-// instantly consistent for reads from a different function invocation in
-// practice, so a short staleness window flickers to "offline" between
-// heartbeats even while they're arriving on schedule every few seconds.
-const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 30_000);
+const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 15_000);
 
-// Deliberately bypasses every caching layer we can reach: list() (not a
-// cacheable get-by-pathname), then a plain authenticated fetch with a
-// cache-busting query param and cache: "no-store" — get()'s useCache:false
-// wasn't enough on its own to guarantee a fresh read here.
+// get() is a direct lookup by exact pathname (like S3 GetObject) — unlike
+// list(), which scans/indexes blobs and can be eventually consistent, so a
+// blob written moments ago may not show up in a list() result yet even
+// though a direct get() for its exact pathname already sees it.
 async function readLatestHeartbeat(): Promise<HeartbeatRecord | null> {
-  const { blobs } = await list({ prefix: HEARTBEAT_BLOB_PATHNAME, limit: 1 });
-  const blob = blobs[0];
-  if (!blob) {
+  const result = await get(HEARTBEAT_BLOB_PATHNAME, { access: "private", useCache: false });
+  if (!result) {
     console.log("[status] no blob at pathname", HEARTBEAT_BLOB_PATHNAME);
     return null;
   }
-
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-  const res = await fetch(`${blob.url}?_=${Date.now()}`, {
-    cache: "no-store",
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
-  if (!res.ok) {
-    console.log("[status] blob fetch failed", res.status, blob.url);
-    return null;
-  }
-
-  const record = (await res.json()) as HeartbeatRecord;
+  const text = await new Response(result.stream).text();
+  const record = JSON.parse(text) as HeartbeatRecord;
   console.log("[status] read heartbeat", { receivedAt: record.receivedAt, now: Date.now() });
   return record;
 }
