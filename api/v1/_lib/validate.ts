@@ -1,4 +1,4 @@
-import type { HeartbeatPayload, ServerStatusEntry } from "./types.ts";
+import type { HeartbeatPayload, ServerStatusEntry } from "./types";
 
 type ValidationResult =
   | { ok: true; payload: HeartbeatPayload }
