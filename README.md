@@ -136,7 +136,7 @@ Go to your project → **Settings → Environment Variables**:
 | `STATUS_API_TOKEN`     | Shared secret the Velocity plugin authenticates with. **Generate a real one**: `openssl rand -hex 32`. |
 | `WEBSITE_ORIGIN`       | Optional. Only needed if some *other* site should also be allowed to read `GET /api/v1/status` from a browser — this site's own frontend is same-origin and doesn't need it. |
 | `BLOB_READ_WRITE_TOKEN`| Auto-created when you connect a Blob store to this project (see above) — you don't set this by hand. |
-| `STALE_AFTER_MS`     | If no heartbeat arrives within this window, the network is reported offline instead of serving old numbers as live. Default `15000`. |
+| `STALE_AFTER_MS`     | If no heartbeat arrives within this window, the network is reported offline instead of serving old numbers as live. Default `45000` — wider than the 5s heartbeat interval to absorb real read propagation lag observed with Vercel Blob. |
 
 After adding/changing these, redeploy (Vercel's dashboard has a "Redeploy" button on the
 latest deployment, or just push a commit) so the functions pick them up.

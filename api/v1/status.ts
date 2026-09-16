@@ -6,7 +6,12 @@
 import { get } from "@vercel/blob";
 import { HEARTBEAT_BLOB_PATHNAME, type HeartbeatRecord } from "./_lib/types.js";
 
-const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 15_000);
+// Generous on purpose: Vercel Blob reads (even a direct get() by pathname
+// with useCache:false) have shown real propagation lag in practice here —
+// a heartbeat that just landed isn't always visible to the very next read.
+// Heartbeats arrive every few seconds regardless, so a real outage is still
+// caught well within this window.
+const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 45_000);
 
 // get() is a direct lookup by exact pathname (like S3 GetObject) — unlike
 // list(), which scans/indexes blobs and can be eventually consistent, so a
