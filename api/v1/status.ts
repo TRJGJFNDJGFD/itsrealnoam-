@@ -4,7 +4,7 @@
 // fetches). WEBSITE_ORIGIN, if set, additionally allows other origins to
 // read this endpoint from a browser.
 import { getCache } from "@vercel/functions";
-import { HEARTBEAT_CACHE_KEY, type HeartbeatRecord } from "./_lib/types";
+import { HEARTBEAT_CACHE_KEY, type HeartbeatRecord } from "./_lib/types.js";
 
 export default {
   async fetch(request: Request) {

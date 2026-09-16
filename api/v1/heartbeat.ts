@@ -5,8 +5,8 @@
 // check in status.ts already treats "no recent heartbeat" as offline, so an
 // evicted entry just looks like a normal stale/offline period.
 import { getCache } from "@vercel/functions";
-import { validateHeartbeat } from "./_lib/validate";
-import { HEARTBEAT_CACHE_KEY, type HeartbeatRecord } from "./_lib/types";
+import { validateHeartbeat } from "./_lib/validate.js";
+import { HEARTBEAT_CACHE_KEY, type HeartbeatRecord } from "./_lib/types.js";
 
 function json(body: unknown, status: number): Response {
   return Response.json(body, { status });
