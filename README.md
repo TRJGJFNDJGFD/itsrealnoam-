@@ -3,12 +3,12 @@
 ```text
 itsrealnoam- /
 ├── src/                          React + TypeScript + Vite + Tailwind + Framer Motion (the website)
-├── netlify/functions/            The status API — Netlify Functions, deployed as part of THIS SAME site
+├── api/v1/                       The status API — Vercel Functions, deployed as part of THIS SAME site
 └── legendil-status-velocity/     Java Maven plugin for Velocity, reports live status
 ```
 
-There is **one deployment**: this repo, pushed to Netlify. The website and the status API
-ship together, on the same domain, from the same `netlify.toml`. There's no separate
+There is **one deployment**: this repo, pushed to Vercel. The website and the status API
+ship together, on the same domain, from the same `vercel.json`. There's no separate
 server, no separate hosting account, and no second URL to configure. Data flows one way:
 
 ```text
@@ -16,15 +16,15 @@ Minecraft servers
       ↓
    Velocity  (legendil-status-velocity plugin)
       ↓ HTTPS POST every 5s, Bearer-token authenticated
-   Status API  (netlify/functions/heartbeat.ts, on this site)
-      ↓ stored in Netlify Blobs
-   Status API  (netlify/functions/status.ts, on this site)
+   Status API  (api/v1/heartbeat.ts, on this site)
+      ↓ stored in Vercel's Runtime Cache
+   Status API  (api/v1/status.ts, on this site)
       ↓ same-origin HTTPS GET, public, read-only
    Website  (/status page + homepage teaser card)
 ```
 
 The browser never talks to Velocity directly. The Velocity API token lives only in
-Netlify's environment variables (read by the `heartbeat` function) and is never present
+Vercel's environment variables (read by the `heartbeat` function) and is never present
 in the website's bundle or in any GET response.
 
 ---
@@ -41,25 +41,26 @@ npm run preview   # preview the production build
 ### Running the whole thing locally (website + functions together)
 
 Plain `npm run dev` only starts Vite, so `/status` will show "Status Unavailable" — there's
-no function server behind it. To run both together like Netlify does in production, use the
-[Netlify CLI](https://docs.netlify.com/cli/get-started/):
+no function server behind it. To run both together like Vercel does in production, use the
+[Vercel CLI](https://vercel.com/docs/cli):
 
 ```bash
-npm install -g netlify-cli   # one-time
-cp .env.example .env          # then fill in STATUS_API_TOKEN
-netlify dev
+npm install -g vercel   # one-time
+vercel link              # one-time, links this folder to your Vercel project
+cp .env.example .env      # then fill in STATUS_API_TOKEN
+vercel env pull .env.local  # or set env vars via `vercel dev`'s prompts
+vercel dev
 ```
 
-This serves the Vite app **and** `netlify/functions/*` on one local URL, with `/api/v1/*`
-routed to the functions exactly like production. `netlify dev` reads `.env` at the repo
-root automatically.
+This serves the Vite app **and** `api/v1/*` on one local URL, with `/api/v1/*` routed to
+the functions exactly like production.
 
 ### Where the live data is used
 
-- `netlify/functions/heartbeat.ts` — Velocity posts here; validates and stores the
-  payload in a Netlify Blobs store (`getStore("status")`).
-- `netlify/functions/status.ts` — the website reads from here; applies the
-  staleness check (see below) before ever calling the network "online".
+- `api/v1/heartbeat.ts` — Velocity posts here; validates and stores the payload in
+  Vercel's Runtime Cache (`getCache()` from `@vercel/functions`).
+- `api/v1/status.ts` — the website reads from here; applies the staleness check (see
+  below) before ever calling the network "online".
 - `src/lib/statusApi.ts` — the only place the frontend calls `fetch()`; always hits
   `/api/v1/status` on the same origin, no URL to configure.
 - `src/lib/networkStatusStore.ts` — a small shared poller (5s interval) so every
@@ -82,9 +83,9 @@ dashboard because Velocity can't currently supply them reliably (see "Future wor
 
 ---
 
-## 2. The status API (`netlify/functions/`)
+## 2. The status API (`api/v1/`)
 
-Three Netlify Functions, deployed automatically whenever this repo deploys to Netlify —
+Three Vercel Functions, deployed automatically whenever this repo deploys to Vercel —
 no separate build, no separate host, no separate account:
 
 - `GET /api/v1/health` → `{ "status": "ok" }`
@@ -97,7 +98,7 @@ no separate build, no separate host, no separate account:
   {
     "network": "legend-il",
     "status": "online",
-    "lastUpdated": "2026-09-07T12:00:05.000Z",
+    "lastUpdated": "2026-09-16T12:00:05.000Z",
     "totalPlayers": 91,
     "serversOnline": 2,
     "serversTotal": 3,
@@ -114,13 +115,17 @@ no separate build, no separate host, no separate account:
 ### Why this works without a server to manage
 
 Functions are stateless — a fresh invocation doesn't remember the previous one — so the
-latest heartbeat is stored in **Netlify Blobs**, a small key-value store attached to your
-Netlify site. No database to provision, no separate service, no extra credentials: it's
-configured automatically for functions running on Netlify (and in `netlify dev` locally).
+latest heartbeat is stored in Vercel's **Runtime Cache** (`@vercel/functions`'
+`getCache()`), a small key-value cache built into Vercel Functions themselves. No
+database to provision, no separate service, no extra credentials, no dashboard step —
+it's available automatically to every function on the Hobby plan. It's a *cache* (an
+entry can be evicted before its TTL in rare cases), which is fine here: the staleness
+check already treats "no recent heartbeat" as offline, so an evicted entry just looks
+like a normal offline period rather than breaking anything.
 
-### Environment variables (set these in Netlify's dashboard)
+### Environment variables (set these in Vercel's dashboard)
 
-Go to **Site configuration → Environment variables** on your Netlify site:
+Go to your project → **Settings → Environment Variables**:
 
 | Variable            | Meaning                                                                 |
 |----------------------|--------------------------------------------------------------------------|
@@ -128,23 +133,23 @@ Go to **Site configuration → Environment variables** on your Netlify site:
 | `WEBSITE_ORIGIN`     | Optional. Only needed if some *other* site should also be allowed to read `GET /api/v1/status` from a browser — this site's own frontend is same-origin and doesn't need it. |
 | `STALE_AFTER_MS`     | If no heartbeat arrives within this window, the network is reported offline instead of serving old numbers as live. Default `15000`. |
 
-After adding/changing these, trigger a redeploy (Netlify's UI has a "Trigger deploy"
-button, or just push a commit) so the functions pick them up.
+After adding/changing these, redeploy (Vercel's dashboard has a "Redeploy" button on the
+latest deployment, or just push a commit) so the functions pick them up.
 
 ### Testing it end-to-end
 
-Against your deployed site (replace with your real Netlify URL):
+Against your deployed site (replace with your real Vercel URL):
 
 ```bash
-curl https://YOUR-SITE.netlify.app/api/v1/health
+curl https://YOUR-SITE.vercel.app/api/v1/health
 # {"status":"ok"}
 
-curl -X POST https://YOUR-SITE.netlify.app/api/v1/heartbeat \
+curl -X POST https://YOUR-SITE.vercel.app/api/v1/heartbeat \
   -H "Authorization: Bearer YOUR_TOKEN" -H "Content-Type: application/json" \
-  -d '{"network":"legend-il","timestamp":"2026-09-07T12:00:00Z","servers":[{"name":"lobby","status":"online","players":24,"maxPlayers":100}],"totalPlayers":24}'
+  -d '{"network":"legend-il","timestamp":"2026-09-16T12:00:00Z","servers":[{"name":"lobby","status":"online","players":24,"maxPlayers":100}],"totalPlayers":24}'
 # {"success":true}   (wrong token -> 401 Unauthorized)
 
-curl https://YOUR-SITE.netlify.app/api/v1/status
+curl https://YOUR-SITE.vercel.app/api/v1/status
 # the JSON shape above, populated within a few seconds of the heartbeat
 ```
 
@@ -184,12 +189,12 @@ you fill it in:
 # The network name reported in every heartbeat payload.
 network=legend-il
 
-# Your Netlify site's heartbeat endpoint. Use the real https:// URL Netlify
+# Your Vercel site's heartbeat endpoint. Use the real https:// URL Vercel
 # gives your site (or your custom domain, once you have one) — never a bare
 # IP or http://, since this must be a valid HTTPS endpoint.
-api-url=https://YOUR-SITE.netlify.app/api/v1/heartbeat
+api-url=https://YOUR-SITE.vercel.app/api/v1/heartbeat
 
-# Must match the STATUS_API_TOKEN set in Netlify's environment variables.
+# Must match the STATUS_API_TOKEN set in Vercel's environment variables.
 # Never commit this.
 api-token=change-me
 
@@ -200,10 +205,10 @@ heartbeat-interval=5
 Restart the proxy after editing it. You should see a log line like:
 
 ```text
-[legendil-status] Sending heartbeats for network 'legend-il' every 5s to https://YOUR-SITE.netlify.app/api/v1/heartbeat
+[legendil-status] Sending heartbeats for network 'legend-il' every 5s to https://YOUR-SITE.vercel.app/api/v1/heartbeat
 ```
 
-Because the target is your Netlify site over HTTPS, this works with a managed game-panel
+Because the target is your Vercel site over HTTPS, this works with a managed game-panel
 Minecraft host too — there's nothing to run alongside Velocity, no VPS, no tunnel. The
 plugin just needs outbound HTTPS access, which a Minecraft host always allows.
 
@@ -229,15 +234,15 @@ breaking the API contract.
 
 ## Verifying the whole pipeline works
 
-1. Deploy this repo to Netlify (push to the branch Netlify builds from) and set
+1. Deploy this repo to Vercel (push to the branch Vercel builds from) and set
    `STATUS_API_TOKEN` in its environment variables.
-2. `curl https://YOUR-SITE.netlify.app/api/v1/health` → `{"status":"ok"}`.
+2. `curl https://YOUR-SITE.vercel.app/api/v1/health` → `{"status":"ok"}`.
 3. Build and install the Velocity plugin, point its `api-url` at
-   `https://YOUR-SITE.netlify.app/api/v1/heartbeat` with your real token, restart the
+   `https://YOUR-SITE.vercel.app/api/v1/heartbeat` with your real token, restart the
    proxy, and watch its console for the "Sending heartbeats..." log line.
-4. `curl https://YOUR-SITE.netlify.app/api/v1/status` — within 5 seconds you should see
+4. `curl https://YOUR-SITE.vercel.app/api/v1/status` — within 5 seconds you should see
    real player/server counts appear.
-5. Open `https://YOUR-SITE.netlify.app/status` — the dashboard should match what curl
+5. Open `https://YOUR-SITE.vercel.app/status` — the dashboard should match what curl
    showed you. No env var or redeploy needed on the website side — it's the same site.
 6. Stop the proxy (or just wait): after 15 seconds with no heartbeat, both the API and
    the website should report the network offline rather than showing stale numbers.
@@ -254,8 +259,8 @@ show them:
 - Real per-server ping
 - A real online-player list (with usernames only — still no IPs/UUIDs)
 - Player join/leave/session history
-- A 24h/7d/30d players-online graph (needs history stored across multiple Blobs keys,
-  not just the latest heartbeat)
+- A 24h/7d/30d players-online graph (needs real persistent storage — e.g. Vercel
+  Blob or a database — instead of just the latest cached heartbeat)
 - Maintenance mode / incident banners
 - Multiple Velocity proxies reporting into the same API
 
@@ -271,9 +276,9 @@ adding fake numbers back in would violate the whole point of this rework.
   are documented inline in `src/` — see `src/lib/router.ts` for the tiny client-side
   router and `src/config/site.ts` for the single source of truth on the server IP,
   Discord invite, and vote link.
-- `/staff` reads from `src/config/staff.ts` — fill in the real team there (name, role,
-  optional Discord link). The page shows "hasn't been filled in yet" until you do; no
-  placeholder people are shown.
+- `/staff` reads from `src/config/staff.ts` — fill in the real team there (username,
+  optional Minecraft `uuid`). The page shows "Vacant" for empty ranks; no placeholder
+  people are shown.
 - The "Notify me" toggle on `/status` (`src/lib/useStatusNotifications.ts`) uses the
   browser's own Notification API — no server, email, or push service involved. It only
   fires while the tab is open and the opt-in is remembered per-browser via

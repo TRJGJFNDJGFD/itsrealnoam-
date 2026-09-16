@@ -16,3 +16,5 @@ export type HeartbeatRecord = {
   payload: HeartbeatPayload;
   receivedAt: number;
 };
+
+export const HEARTBEAT_CACHE_KEY = "legendil-status:latest-heartbeat";
