@@ -6,7 +6,11 @@
 import { list } from "@vercel/blob";
 import { HEARTBEAT_BLOB_PATHNAME, type HeartbeatRecord } from "./_lib/types.js";
 
-const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 15_000);
+// 30s rather than a tighter window: Vercel Blob writes don't appear to be
+// instantly consistent for reads from a different function invocation in
+// practice, so a short staleness window flickers to "offline" between
+// heartbeats even while they're arriving on schedule every few seconds.
+const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 30_000);
 
 // Deliberately bypasses every caching layer we can reach: list() (not a
 // cacheable get-by-pathname), then a plain authenticated fetch with a
