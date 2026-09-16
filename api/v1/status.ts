@@ -33,7 +33,21 @@ export default {
 
     const redis = Redis.fromEnv();
     const record = await redis.get<HeartbeatRecord>(HEARTBEAT_REDIS_KEY);
-    const isFresh = record !== null && Date.now() - record.receivedAt <= STALE_AFTER_MS;
+    const serverNow = Date.now();
+    const ageMs = record ? serverNow - record.receivedAt : null;
+    const isFresh = record !== null && ageMs !== null && ageMs <= STALE_AFTER_MS;
+
+    // TEMPORARY: exposes the server's own freshness math directly in the
+    // response so this can be diagnosed without any client-clock guesswork.
+    const _debug = {
+      hasRecord: record !== null,
+      receivedAt: record?.receivedAt ?? null,
+      receivedAtType: typeof record?.receivedAt,
+      serverNow,
+      ageMs,
+      staleAfterMs: STALE_AFTER_MS,
+      isFresh,
+    };
 
     if (!record || !isFresh) {
       return new Response(
@@ -45,6 +59,7 @@ export default {
           serversOnline: null,
           serversTotal: null,
           servers: [],
+          _debug,
         }),
         { status: 200, headers }
       );
@@ -61,6 +76,7 @@ export default {
         serversOnline,
         serversTotal: record.payload.servers.length,
         servers: record.payload.servers,
+        _debug,
       }),
       { status: 200, headers }
     );
