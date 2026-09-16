@@ -3,25 +3,36 @@
 // it, so no separate host or CORS story is needed for the site's own
 // fetches). WEBSITE_ORIGIN, if set, additionally allows other origins to
 // read this endpoint from a browser.
-import { get, list } from "@vercel/blob";
+import { list } from "@vercel/blob";
 import { HEARTBEAT_BLOB_PATHNAME, type HeartbeatRecord } from "./_lib/types.js";
 
 const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 15_000);
 
+// Deliberately bypasses every caching layer we can reach: list() (not a
+// cacheable get-by-pathname), then a plain authenticated fetch with a
+// cache-busting query param and cache: "no-store" — get()'s useCache:false
+// wasn't enough on its own to guarantee a fresh read here.
 async function readLatestHeartbeat(): Promise<HeartbeatRecord | null> {
-  const result = await get(HEARTBEAT_BLOB_PATHNAME, { access: "private", useCache: false });
-  if (!result) {
-    const { blobs } = await list({ limit: 10 });
-    console.log(
-      "[status] blob not found for pathname",
-      HEARTBEAT_BLOB_PATHNAME,
-      "— store contains:",
-      blobs.map((b) => b.pathname)
-    );
+  const { blobs } = await list({ prefix: HEARTBEAT_BLOB_PATHNAME, limit: 1 });
+  const blob = blobs[0];
+  if (!blob) {
+    console.log("[status] no blob at pathname", HEARTBEAT_BLOB_PATHNAME);
     return null;
   }
-  const text = await new Response(result.stream).text();
-  return JSON.parse(text) as HeartbeatRecord;
+
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  const res = await fetch(`${blob.url}?_=${Date.now()}`, {
+    cache: "no-store",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) {
+    console.log("[status] blob fetch failed", res.status, blob.url);
+    return null;
+  }
+
+  const record = (await res.json()) as HeartbeatRecord;
+  console.log("[status] read heartbeat", { receivedAt: record.receivedAt, now: Date.now() });
+  return record;
 }
 
 export default {
