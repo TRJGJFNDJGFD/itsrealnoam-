@@ -31,7 +31,14 @@ async function readLatestHeartbeat(): Promise<HeartbeatRecord | null> {
 
 export default {
   async fetch(request: Request) {
-    const headers: Record<string, string> = { "content-type": "application/json" };
+    // Without an explicit no-store directive, Vercel's edge network can
+    // cache this response and keep serving a frozen snapshot to later
+    // requests — even ones hitting a different edge location — instead of
+    // re-running this function each time.
+    const headers: Record<string, string> = {
+      "content-type": "application/json",
+      "cache-control": "no-store, must-revalidate",
+    };
 
     const origin = request.headers.get("origin");
     const allowedOrigins = (process.env.WEBSITE_ORIGIN ?? "")
