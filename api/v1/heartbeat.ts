@@ -42,13 +42,14 @@ export default {
 
     const record: HeartbeatRecord = { payload: result.payload, receivedAt: Date.now() };
 
-    await put(HEARTBEAT_BLOB_PATHNAME, JSON.stringify(record), {
+    const blob = await put(HEARTBEAT_BLOB_PATHNAME, JSON.stringify(record), {
       access: "private",
       contentType: "application/json",
       allowOverwrite: true,
       addRandomSuffix: false,
       cacheControlMaxAge: 0,
     });
+    console.log("[heartbeat] wrote blob", { pathname: blob.pathname, url: blob.url });
 
     return json({ success: true }, 200);
   },

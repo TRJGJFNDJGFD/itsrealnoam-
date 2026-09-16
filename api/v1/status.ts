@@ -3,14 +3,23 @@
 // it, so no separate host or CORS story is needed for the site's own
 // fetches). WEBSITE_ORIGIN, if set, additionally allows other origins to
 // read this endpoint from a browser.
-import { get } from "@vercel/blob";
+import { get, list } from "@vercel/blob";
 import { HEARTBEAT_BLOB_PATHNAME, type HeartbeatRecord } from "./_lib/types.js";
 
 const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 15_000);
 
 async function readLatestHeartbeat(): Promise<HeartbeatRecord | null> {
   const result = await get(HEARTBEAT_BLOB_PATHNAME, { access: "private", useCache: false });
-  if (!result) return null;
+  if (!result) {
+    const { blobs } = await list({ limit: 10 });
+    console.log(
+      "[status] blob not found for pathname",
+      HEARTBEAT_BLOB_PATHNAME,
+      "— store contains:",
+      blobs.map((b) => b.pathname)
+    );
+    return null;
+  }
   const text = await new Response(result.stream).text();
   return JSON.parse(text) as HeartbeatRecord;
 }
