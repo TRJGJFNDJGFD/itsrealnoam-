@@ -17,7 +17,7 @@ Minecraft servers
    Velocity  (legendil-status-velocity plugin)
       ↓ HTTPS POST every 5s, Bearer-token authenticated
    Status API  (api/v1/heartbeat.ts, on this site)
-      ↓ stored in Vercel Blob
+      ↓ stored in Redis (Upstash, via Vercel Marketplace)
    Status API  (api/v1/status.ts, on this site)
       ↓ same-origin HTTPS GET, public, read-only
    Website  (/status page + homepage teaser card)
@@ -58,7 +58,7 @@ the functions exactly like production.
 ### Where the live data is used
 
 - `api/v1/heartbeat.ts` — Velocity posts here; validates and stores the payload in
-  Vercel Blob (`@vercel/blob`'s `put()`, overwriting the same pathname each time).
+  Redis (`@upstash/redis`'s `set()`, overwriting the same key each time).
 - `api/v1/status.ts` — the website reads from here; applies the staleness check (see
   below) before ever calling the network "online".
 - `src/lib/statusApi.ts` — the only place the frontend calls `fetch()`; always hits
@@ -115,28 +115,37 @@ no separate build, no separate host, no separate account:
 ### Why this works without a server to manage
 
 Functions are stateless — a fresh invocation doesn't remember the previous one — so the
-latest heartbeat is stored in **Vercel Blob**, real object storage that's part of the
-Vercel dashboard (not a separate account or service). Earlier this used Vercel's
-Runtime Cache instead, which turned out to be scoped per region/instance rather than
-truly shared — a heartbeat written by one function instance wasn't reliably visible to a
-status read handled by a different one. Blob is a real, globally-consistent store, so
-that problem doesn't happen.
+latest heartbeat is stored in **Redis** (via Upstash, added through the Vercel
+Marketplace — still just a click in the Vercel dashboard, not a separate account to
+manage). Two earlier approaches were tried and dropped:
 
-**One-time setup required:** in the Vercel dashboard, go to **Storage → Create Database
-→ Blob**, create a store, and connect it to this project. That's what provisions the
-`BLOB_READ_WRITE_TOKEN` environment variable the functions need — nothing to configure
-by hand, no separate account, just one click in the same dashboard.
+- **Vercel Runtime Cache** — scoped per region/instance, not truly shared: a heartbeat
+  written by one function instance wasn't reliably visible to a status read handled by
+  a different one.
+- **Vercel Blob** — real, durable storage, but reads proved unreliably stale in
+  practice for a single value being overwritten every few seconds. Object storage isn't
+  built for that access pattern.
+
+Redis is a proper key-value database and doesn't have either problem — a `set()` is
+immediately visible to the next `get()`, from any function instance.
+
+**One-time setup required:** in the Vercel dashboard, go to your project → **Storage →
+Create Database**, and add an **Upstash for Redis** database (via the Marketplace) —
+connect it to this project. That provisions the `UPSTASH_REDIS_REST_URL` and
+`UPSTASH_REDIS_REST_TOKEN` environment variables the functions read automatically via
+`Redis.fromEnv()` — nothing to configure by hand.
 
 ### Environment variables (set these in Vercel's dashboard)
 
 Go to your project → **Settings → Environment Variables**:
 
-| Variable              | Meaning                                                                 |
-|------------------------|--------------------------------------------------------------------------|
-| `STATUS_API_TOKEN`     | Shared secret the Velocity plugin authenticates with. **Generate a real one**: `openssl rand -hex 32`. |
-| `WEBSITE_ORIGIN`       | Optional. Only needed if some *other* site should also be allowed to read `GET /api/v1/status` from a browser — this site's own frontend is same-origin and doesn't need it. |
-| `BLOB_READ_WRITE_TOKEN`| Auto-created when you connect a Blob store to this project (see above) — you don't set this by hand. |
-| `STALE_AFTER_MS`     | If no heartbeat arrives within this window, the network is reported offline instead of serving old numbers as live. Default `45000` — wider than the 5s heartbeat interval to absorb real read propagation lag observed with Vercel Blob. |
+| Variable                  | Meaning                                                                 |
+|----------------------------|--------------------------------------------------------------------------|
+| `STATUS_API_TOKEN`         | Shared secret the Velocity plugin authenticates with. **Generate a real one**: `openssl rand -hex 32`. |
+| `WEBSITE_ORIGIN`           | Optional. Only needed if some *other* site should also be allowed to read `GET /api/v1/status` from a browser — this site's own frontend is same-origin and doesn't need it. |
+| `UPSTASH_REDIS_REST_URL`   | Auto-created when you connect a Redis database to this project (see above) — you don't set this by hand. |
+| `UPSTASH_REDIS_REST_TOKEN` | Same — auto-created, not set by hand. |
+| `STALE_AFTER_MS`           | If no heartbeat arrives within this window, the network is reported offline instead of serving old numbers as live. Default `15000`. |
 
 After adding/changing these, redeploy (Vercel's dashboard has a "Redeploy" button on the
 latest deployment, or just push a commit) so the functions pick them up.

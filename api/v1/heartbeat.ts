@@ -1,11 +1,14 @@
 // Velocity-only endpoint. Requires "Authorization: Bearer <STATUS_API_TOKEN>".
-// Stores the latest heartbeat in Vercel Blob — real, globally-consistent
-// storage (unlike Vercel's Runtime Cache, which is scoped per region/
-// instance and isn't reliable for a single shared "latest value" written
-// by one server and read by every visitor's browser).
-import { put } from "@vercel/blob";
+// Stores the latest heartbeat in Redis (Upstash, via the Vercel Marketplace
+// integration) — a real key-value database, strongly consistent by design.
+// Vercel Blob was tried first for this, since it needs no separate
+// provisioning step, but its reads proved unreliably stale for a value
+// overwritten every few seconds (not what object storage is built for);
+// Redis is the right tool for "one value, updated constantly, read by
+// everyone" and doesn't have that problem.
+import { Redis } from "@upstash/redis";
 import { validateHeartbeat } from "./_lib/validate.js";
-import { HEARTBEAT_BLOB_PATHNAME, type HeartbeatRecord } from "./_lib/types.js";
+import { HEARTBEAT_REDIS_KEY, type HeartbeatRecord } from "./_lib/types.js";
 
 function json(body: unknown, status: number): Response {
   return Response.json(body, { status });
@@ -42,14 +45,8 @@ export default {
 
     const record: HeartbeatRecord = { payload: result.payload, receivedAt: Date.now() };
 
-    const blob = await put(HEARTBEAT_BLOB_PATHNAME, JSON.stringify(record), {
-      access: "private",
-      contentType: "application/json",
-      allowOverwrite: true,
-      addRandomSuffix: false,
-      cacheControlMaxAge: 0,
-    });
-    console.log("[heartbeat] wrote blob", { pathname: blob.pathname, url: blob.url });
+    const redis = Redis.fromEnv();
+    await redis.set(HEARTBEAT_REDIS_KEY, record);
 
     return json({ success: true }, 200);
   },

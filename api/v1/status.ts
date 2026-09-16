@@ -3,31 +3,10 @@
 // it, so no separate host or CORS story is needed for the site's own
 // fetches). WEBSITE_ORIGIN, if set, additionally allows other origins to
 // read this endpoint from a browser.
-import { get } from "@vercel/blob";
-import { HEARTBEAT_BLOB_PATHNAME, type HeartbeatRecord } from "./_lib/types.js";
+import { Redis } from "@upstash/redis";
+import { HEARTBEAT_REDIS_KEY, type HeartbeatRecord } from "./_lib/types.js";
 
-// Generous on purpose: Vercel Blob reads (even a direct get() by pathname
-// with useCache:false) have shown real propagation lag in practice here —
-// a heartbeat that just landed isn't always visible to the very next read.
-// Heartbeats arrive every few seconds regardless, so a real outage is still
-// caught well within this window.
-const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 45_000);
-
-// get() is a direct lookup by exact pathname (like S3 GetObject) — unlike
-// list(), which scans/indexes blobs and can be eventually consistent, so a
-// blob written moments ago may not show up in a list() result yet even
-// though a direct get() for its exact pathname already sees it.
-async function readLatestHeartbeat(): Promise<HeartbeatRecord | null> {
-  const result = await get(HEARTBEAT_BLOB_PATHNAME, { access: "private", useCache: false });
-  if (!result) {
-    console.log("[status] no blob at pathname", HEARTBEAT_BLOB_PATHNAME);
-    return null;
-  }
-  const text = await new Response(result.stream).text();
-  const record = JSON.parse(text) as HeartbeatRecord;
-  console.log("[status] read heartbeat", { receivedAt: record.receivedAt, now: Date.now() });
-  return record;
-}
+const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 15_000);
 
 export default {
   async fetch(request: Request) {
@@ -49,7 +28,8 @@ export default {
       headers["access-control-allow-origin"] = origin;
     }
 
-    const record = await readLatestHeartbeat();
+    const redis = Redis.fromEnv();
+    const record = await redis.get<HeartbeatRecord>(HEARTBEAT_REDIS_KEY);
     const isFresh = record !== null && Date.now() - record.receivedAt <= STALE_AFTER_MS;
 
     if (!record || !isFresh) {
