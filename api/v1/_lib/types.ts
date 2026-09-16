@@ -17,4 +17,4 @@ export type HeartbeatRecord = {
   receivedAt: number;
 };
 
-export const HEARTBEAT_CACHE_KEY = "legendil-status:latest-heartbeat";
+export const HEARTBEAT_BLOB_PATHNAME = "legendil-status/latest-heartbeat.json";

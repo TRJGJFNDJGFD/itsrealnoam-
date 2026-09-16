@@ -1,12 +1,11 @@
 // Velocity-only endpoint. Requires "Authorization: Bearer <STATUS_API_TOKEN>".
-// Stores the latest heartbeat in Vercel's Runtime Cache — a built-in cache
-// for Vercel Functions, so no separate database needs provisioning. It's
-// a cache (entries can be evicted early), which is fine here: the staleness
-// check in status.ts already treats "no recent heartbeat" as offline, so an
-// evicted entry just looks like a normal stale/offline period.
-import { getCache } from "@vercel/functions";
+// Stores the latest heartbeat in Vercel Blob — real, globally-consistent
+// storage (unlike Vercel's Runtime Cache, which is scoped per region/
+// instance and isn't reliable for a single shared "latest value" written
+// by one server and read by every visitor's browser).
+import { put } from "@vercel/blob";
 import { validateHeartbeat } from "./_lib/validate.js";
-import { HEARTBEAT_CACHE_KEY, type HeartbeatRecord } from "./_lib/types.js";
+import { HEARTBEAT_BLOB_PATHNAME, type HeartbeatRecord } from "./_lib/types.js";
 
 function json(body: unknown, status: number): Response {
   return Response.json(body, { status });
@@ -42,13 +41,13 @@ export default {
     }
 
     const record: HeartbeatRecord = { payload: result.payload, receivedAt: Date.now() };
-    const staleAfterMs = Number(process.env.STALE_AFTER_MS ?? 15_000);
 
-    const cache = getCache();
-    await cache.set(HEARTBEAT_CACHE_KEY, record, {
-      // A little longer than the staleness window itself, so the cache
-      // never expires an entry status.ts would still consider fresh.
-      ttl: Math.ceil(staleAfterMs / 1000) + 10,
+    await put(HEARTBEAT_BLOB_PATHNAME, JSON.stringify(record), {
+      access: "public",
+      contentType: "application/json",
+      allowOverwrite: true,
+      addRandomSuffix: false,
+      cacheControlMaxAge: 0,
     });
 
     return json({ success: true }, 200);

@@ -17,7 +17,7 @@ Minecraft servers
    Velocity  (legendil-status-velocity plugin)
       ↓ HTTPS POST every 5s, Bearer-token authenticated
    Status API  (api/v1/heartbeat.ts, on this site)
-      ↓ stored in Vercel's Runtime Cache
+      ↓ stored in Vercel Blob
    Status API  (api/v1/status.ts, on this site)
       ↓ same-origin HTTPS GET, public, read-only
    Website  (/status page + homepage teaser card)
@@ -58,7 +58,7 @@ the functions exactly like production.
 ### Where the live data is used
 
 - `api/v1/heartbeat.ts` — Velocity posts here; validates and stores the payload in
-  Vercel's Runtime Cache (`getCache()` from `@vercel/functions`).
+  Vercel Blob (`@vercel/blob`'s `put()`, overwriting the same pathname each time).
 - `api/v1/status.ts` — the website reads from here; applies the staleness check (see
   below) before ever calling the network "online".
 - `src/lib/statusApi.ts` — the only place the frontend calls `fetch()`; always hits
@@ -115,22 +115,27 @@ no separate build, no separate host, no separate account:
 ### Why this works without a server to manage
 
 Functions are stateless — a fresh invocation doesn't remember the previous one — so the
-latest heartbeat is stored in Vercel's **Runtime Cache** (`@vercel/functions`'
-`getCache()`), a small key-value cache built into Vercel Functions themselves. No
-database to provision, no separate service, no extra credentials, no dashboard step —
-it's available automatically to every function on the Hobby plan. It's a *cache* (an
-entry can be evicted before its TTL in rare cases), which is fine here: the staleness
-check already treats "no recent heartbeat" as offline, so an evicted entry just looks
-like a normal offline period rather than breaking anything.
+latest heartbeat is stored in **Vercel Blob**, real object storage that's part of the
+Vercel dashboard (not a separate account or service). Earlier this used Vercel's
+Runtime Cache instead, which turned out to be scoped per region/instance rather than
+truly shared — a heartbeat written by one function instance wasn't reliably visible to a
+status read handled by a different one. Blob is a real, globally-consistent store, so
+that problem doesn't happen.
+
+**One-time setup required:** in the Vercel dashboard, go to **Storage → Create Database
+→ Blob**, create a store, and connect it to this project. That's what provisions the
+`BLOB_READ_WRITE_TOKEN` environment variable the functions need — nothing to configure
+by hand, no separate account, just one click in the same dashboard.
 
 ### Environment variables (set these in Vercel's dashboard)
 
 Go to your project → **Settings → Environment Variables**:
 
-| Variable            | Meaning                                                                 |
-|----------------------|--------------------------------------------------------------------------|
-| `STATUS_API_TOKEN`   | Shared secret the Velocity plugin authenticates with. **Generate a real one**: `openssl rand -hex 32`. |
-| `WEBSITE_ORIGIN`     | Optional. Only needed if some *other* site should also be allowed to read `GET /api/v1/status` from a browser — this site's own frontend is same-origin and doesn't need it. |
+| Variable              | Meaning                                                                 |
+|------------------------|--------------------------------------------------------------------------|
+| `STATUS_API_TOKEN`     | Shared secret the Velocity plugin authenticates with. **Generate a real one**: `openssl rand -hex 32`. |
+| `WEBSITE_ORIGIN`       | Optional. Only needed if some *other* site should also be allowed to read `GET /api/v1/status` from a browser — this site's own frontend is same-origin and doesn't need it. |
+| `BLOB_READ_WRITE_TOKEN`| Auto-created when you connect a Blob store to this project (see above) — you don't set this by hand. |
 | `STALE_AFTER_MS`     | If no heartbeat arrives within this window, the network is reported offline instead of serving old numbers as live. Default `15000`. |
 
 After adding/changing these, redeploy (Vercel's dashboard has a "Redeploy" button on the
@@ -259,8 +264,8 @@ show them:
 - Real per-server ping
 - A real online-player list (with usernames only — still no IPs/UUIDs)
 - Player join/leave/session history
-- A 24h/7d/30d players-online graph (needs real persistent storage — e.g. Vercel
-  Blob or a database — instead of just the latest cached heartbeat)
+- A 24h/7d/30d players-online graph (needs storing a history of heartbeats, not just
+  overwriting the latest one)
 - Maintenance mode / incident banners
 - Multiple Velocity proxies reporting into the same API
 

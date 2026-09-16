@@ -3,8 +3,20 @@
 // it, so no separate host or CORS story is needed for the site's own
 // fetches). WEBSITE_ORIGIN, if set, additionally allows other origins to
 // read this endpoint from a browser.
-import { getCache } from "@vercel/functions";
-import { HEARTBEAT_CACHE_KEY, type HeartbeatRecord } from "./_lib/types.js";
+import { list } from "@vercel/blob";
+import { HEARTBEAT_BLOB_PATHNAME, type HeartbeatRecord } from "./_lib/types.js";
+
+const STALE_AFTER_MS = Number(process.env.STALE_AFTER_MS ?? 15_000);
+
+async function readLatestHeartbeat(): Promise<HeartbeatRecord | null> {
+  const { blobs } = await list({ prefix: HEARTBEAT_BLOB_PATHNAME, limit: 1 });
+  const blob = blobs[0];
+  if (!blob) return null;
+
+  const res = await fetch(blob.url, { cache: "no-store" });
+  if (!res.ok) return null;
+  return (await res.json()) as HeartbeatRecord;
+}
 
 export default {
   async fetch(request: Request) {
@@ -19,11 +31,8 @@ export default {
       headers["access-control-allow-origin"] = origin;
     }
 
-    const staleAfterMs = Number(process.env.STALE_AFTER_MS ?? 15_000);
-    const cache = getCache();
-    const record = (await cache.get(HEARTBEAT_CACHE_KEY)) as HeartbeatRecord | null;
-
-    const isFresh = record !== null && Date.now() - record.receivedAt <= staleAfterMs;
+    const record = await readLatestHeartbeat();
+    const isFresh = record !== null && Date.now() - record.receivedAt <= STALE_AFTER_MS;
 
     if (!record || !isFresh) {
       return new Response(
