@@ -8,7 +8,14 @@
 // everyone" and doesn't have that problem.
 import { Redis } from "@upstash/redis";
 import { validateHeartbeat } from "./_lib/validate.js";
-import { HEARTBEAT_REDIS_KEY, type HeartbeatRecord } from "./_lib/types.js";
+import {
+  HEARTBEAT_REDIS_KEY,
+  HISTORY_REDIS_KEY,
+  HISTORY_BUCKET_MS,
+  HISTORY_WINDOW_MS,
+  type HeartbeatRecord,
+  type HistoryPoint,
+} from "./_lib/types.js";
 
 function json(body: unknown, status: number): Response {
   return Response.json(body, { status });
@@ -47,6 +54,16 @@ export default {
 
     const redis = Redis.fromEnv();
     await redis.set(HEARTBEAT_REDIS_KEY, record);
+
+    // Record one history point per minute bucket. Remove any existing entry
+    // at that exact score first so re-heartbeats within the same minute
+    // overwrite instead of piling up, then trim anything outside the
+    // rolling 24h window.
+    const bucket = Math.floor(record.receivedAt / HISTORY_BUCKET_MS) * HISTORY_BUCKET_MS;
+    const point: HistoryPoint = { t: bucket, p: result.payload.totalPlayers };
+    await redis.zremrangebyscore(HISTORY_REDIS_KEY, bucket, bucket);
+    await redis.zadd(HISTORY_REDIS_KEY, { score: bucket, member: JSON.stringify(point) });
+    await redis.zremrangebyscore(HISTORY_REDIS_KEY, 0, Date.now() - HISTORY_WINDOW_MS);
 
     return json({ success: true }, 200);
   },

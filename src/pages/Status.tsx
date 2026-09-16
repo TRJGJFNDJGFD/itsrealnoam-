@@ -5,6 +5,7 @@ import PixelScene from "../components/PixelScene";
 import { ToastProvider } from "../components/status/ToastProvider";
 import StatusHeader, { type StatusVariant } from "../components/status/StatusHeader";
 import NetworkOverview from "../components/status/NetworkOverview";
+import PlayerHistoryChart from "../components/status/PlayerHistoryChart";
 import ServerGrid from "../components/status/ServerGrid";
 import PopularServers from "../components/status/PopularServers";
 import NotifyToggle from "../components/status/NotifyToggle";
@@ -53,6 +54,7 @@ function StatusDashboard() {
                 serversOnline={data.serversOnline ?? 0}
                 serversTotal={data.serversTotal ?? 0}
               />
+              <PlayerHistoryChart />
               <ServerGrid servers={data.servers} />
               <PopularServers servers={data.servers} />
             </>

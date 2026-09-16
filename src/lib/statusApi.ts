@@ -1,7 +1,7 @@
-// Thin client for the status API, which is just Netlify Functions deployed
-// as part of this same site (see /netlify/functions) — no separate host,
-// no API URL to configure. The functions read/write a Netlify Blobs store
-// instead of in-memory state, and are only ever reached over HTTPS by this
+// Thin client for the status API, which is just Vercel Functions deployed
+// as part of this same site (see /api/v1) — no separate host, no API URL
+// to configure. The functions read/write a Redis store (Upstash) instead
+// of in-memory state, and are only ever reached over HTTPS by this
 // same-origin fetch; the Velocity plugin's API token is never present here.
 
 export type StatusApiServer = {
@@ -34,4 +34,15 @@ export async function fetchNetworkStatus(): Promise<StatusApiResponse> {
     throw new Error(`Status API responded with ${res.status}`);
   }
   return (await res.json()) as StatusApiResponse;
+}
+
+export type HistoryPoint = { t: number; p: number };
+
+export async function fetchPlayerHistory(): Promise<HistoryPoint[]> {
+  const res = await fetch("/api/v1/history");
+  if (!res.ok) {
+    throw new Error(`History API responded with ${res.status}`);
+  }
+  const body = (await res.json()) as { points: HistoryPoint[] };
+  return body.points;
 }
