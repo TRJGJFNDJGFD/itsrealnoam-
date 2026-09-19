@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "badges:generate": "node scripts/rank-badges/generate.mjs",
+    "badges:render": "node scripts/rank-badges/render.mjs"
   },
   "dependencies": {
     "@upstash/redis": "^1.38.4",
@@ -24,6 +26,7 @@
     "@vitejs/plugin-react": "^6.0.4",
     "autoprefixer": "^10.5.4",
     "oxlint": "^1.75.0",
+    "playwright-core": "^1.63.0",
     "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
